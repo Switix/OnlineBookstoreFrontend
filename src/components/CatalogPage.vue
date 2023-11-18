@@ -1,6 +1,6 @@
 <template>
+  <HeaderComponent @selected="handleSelectedSuggestion"/>
   <div class="container mx-auto p-4">
-    <SearchBar @selected="handleSelectedSuggestion" />
     <div class="container mx-auto block sm:flex  ">
       <div class="sm:w-1/3 sm:max-w-xs px-4 py-1">
         <h1 class="text-2xl font-bold m-2 text-white">{{catalogTitle}}</h1>
@@ -13,7 +13,7 @@
 
           <div v-for="book in books" :key="book.id" class="w-1/2 sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/4 p-2  ">
             <div class="bg-bg-200 rounded-lg overflow-hidden flex flex-col  h-full">
-              <!-- Zdjęcie książki na górze karty -->
+              <!-- Zdjęcie książki -->
               <div>
                 <img class="object-cover mx-auto  " src="/images/cover.jpg" :alt="book.title" />
               </div>
@@ -35,12 +35,12 @@
 
 <script>
 import BookFilterPanel from '@/components/BookFilterPanel';
-import SearchBar from '@/components/SearchBar';
+import HeaderComponent from '@/components/HeaderComponent';
 
 export default {
   data() {
     return {
-      books: [], // Tablica, w której przechowujemy dane książek pobrane z API
+      books: [], 
       showCategorySection: false,
       showAuthorSection: false,
       catalogTitle:'Książki',
@@ -49,7 +49,6 @@ export default {
     };
   },
   mounted() {
-    // W tym miejscu użyj Axios do pobrania danych książek z API
     this.fetchBooks();
   },
   methods: {
@@ -65,7 +64,7 @@ export default {
     },
     async handleSelectedSuggestion(selectedInfo) {
       const { id, type } = selectedInfo;
-
+      console.log("em cos");
       const fetchData = async (url) => {
         try {
           const response = await this.$axios.get(url + id);
@@ -105,12 +104,11 @@ export default {
     }
   },
   components: {
-    SearchBar,
-    BookFilterPanel
+    BookFilterPanel,
+    HeaderComponent
   }
 };
 </script>
 
 <style scoped>
-/* Dodaj style Tailwind CSS według potrzeb */
 </style>

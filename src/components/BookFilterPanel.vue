@@ -78,7 +78,7 @@ export default {
             this.$emit('selectAuthor', author);
         },
         async fetchCategories() {
-            // Pobierz kategorie
+
             try {
                 const response = await this.$axios.get('http://localhost:8080/api/categories');
                 this.categories = response.data.map(categoryData => {
@@ -89,7 +89,6 @@ export default {
             }
         },
         async fetchAuthors() {
-            // Pobierz autorów
             try {
                 const response = await this.$axios.get('http://localhost:8080/api/search/authors');
                 this.authors = response.data.map(authorData =>{
