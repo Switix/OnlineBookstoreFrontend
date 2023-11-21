@@ -6,10 +6,10 @@
 
         <div v-if="showSuggestions" class="absolute z-10 mt-1 bg-bg-200 border rounded shadow-lg flex flex-col">
             <!-- Nagłówek dla sugestii autorów -->
-            <div v-if="suggestedAuthors.length" class="font-bold p-2 ">Sugerowani Autorzy:</div>
+            <div v-if="suggestedAuthors.length > 0" class="font-bold p-2 ">Sugerowani Autorzy:</div>
             <!-- Sugestie dla autorów -->
-            <ul v-if="suggestedAuthors.length">
-                <li v-for="author in suggestedAuthors" :key="author.name" @click="selectSuggestion(author, 'author')"
+            <ul v-if="suggestedAuthors.length > 0">
+                <li v-for="author in suggestedAuthors" :key="author.name" @click="selectSuggestion(author)"
                     class="p-2 cursor-pointer ">{{ author.name }}</li>
             </ul>
 
@@ -17,8 +17,8 @@
             <div v-if="suggestedCategories.length" class="font-bold p-2">Sugerowane Kategorie:</div>
             <!-- Sugestie dla kategorii -->
             <ul v-if="suggestedCategories.length">
-                <li v-for="category in suggestedCategories" :key="category.name"
-                    @click="selectSuggestion(category, 'category')" class="p-2 cursor-pointer">{{ category.name }}</li>
+                <li v-for="category in suggestedCategories" :key="category.name" @click="selectSuggestion(category)"
+                    class="p-2 cursor-pointer">{{ category.name }}</li>
             </ul>
         </div>
     </div>
@@ -31,32 +31,26 @@ export default {
     data() {
         return {
             searchQuery: '',
-            showSuggestions: false,
-            suggestedAuthors: [],
-            suggestedCategories: []
         };
+    },
+    computed: {
+        suggestedAuthors() {
+            return this.$store.state.suggestedAuthors;
+        },
+        suggestedCategories() {
+            return this.$store.state.suggestedCategories;
+        },
+        showSuggestions() {
+            return this.$store.state.showSuggestions;
+        }
     },
     methods: {
         debouncedUpdateSearch: _.debounce(function () {
-            this.updateSearch();
+            this.$store.dispatch('suggestionSearch', this.searchQuery);
         }, 300),
 
-        async updateSearch() {
-            console.log('Wyszukiwanie:', this.searchQuery);
-            try {
-                const response = await this.$axios.get('http://localhost:8080/api/search', { params: { q: this.searchQuery } });
-                this.suggestedAuthors = response.data.suggestedAuthors;
-                this.suggestedCategories = response.data.suggestedCategories;
-            } catch (error) {
-                console.error('Błąd podczas pobierania danych:', error);
-            }
-            this.showSuggestions = this.searchQuery.length > 0;
-        },
-
-        selectSuggestion(selected, type) {
-            var id = selected.id;
-            this.$emit('selected', { id, type });
-            this.showSuggestions = false;
+        selectSuggestion(selected) {
+            this.$store.dispatch('fetchSelectedSuggestion', selected);
         }
     }
 };

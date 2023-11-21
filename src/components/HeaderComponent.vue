@@ -3,10 +3,10 @@
     <!-- Header z burger menu -->
     <div class="bg-bg-200 w-full sticky top-0 flex items-center justify-between shadow-md p-4">
       <!-- Pozostała zawartość nagłówka -->
-      <div >
+      <div>
         <img class="mx-auto" src="/images/logo-icon.png" :alt="logo" />
       </div>
-      <SearchBar class="grow " @selected="handleSelectedSuggestion" />
+      <SearchBar class="grow " />
 
       <!-- Ikona osoby -->
       <div class="mr-2 mt-2">
@@ -31,19 +31,6 @@
 
       </div>
     </div>
-
-    <!-- Flyout Menu -->
-    <transition name="slide">
-      <div v-show="showMenu" class=" w-full h-full fixed  right-0 flex flex col z-10">
-        <div @click="closeMenu" class=" bg-transparent w-1/3 h-full z-10"></div>
-        <div @click="closeMenu" class="h-full w-2/3 bg-bg-300/95 shadow-md z-10">
-          <!-- Zawartość menu -->
-          <ul class="py-4 px-8">
-
-          </ul>
-        </div>
-      </div>
-    </transition>
   </div>
 </template>
   
@@ -67,10 +54,11 @@ export default {
       this.showMenu = false;
 
     },
-    handleSelectedSuggestion(selectedInfo) {
-      var id = selectedInfo.id;
-      var type = selectedInfo.type;
-      this.$emit('selected', { id, type });
+    openCart() {
+
+    },
+    openUserData() {
+
     }
   },
 };

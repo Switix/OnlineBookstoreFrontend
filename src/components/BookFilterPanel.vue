@@ -45,13 +45,9 @@
 </template>
   
 <script>
-import Category from './model/Category';
-import Author from './model/Author';
 export default {
     data() {
         return {
-            categories: [],
-            authors: [],
             showFilterSection: false,
             showAuthorSection: false,
             showCategorySection: false
@@ -61,6 +57,15 @@ export default {
         this.fetchAuthors();
         this.fetchCategories();
     },
+    computed: {
+        categories() {
+            return this.$store.state.categories;
+        },
+        authors() {
+            return this.$store.state.authors;
+        },
+    },
+
     methods: {
         toggleFilterSection() {
             this.showFilterSection = !this.showFilterSection;
@@ -71,33 +76,18 @@ export default {
         toggleAuthorSection() {
             this.showAuthorSection = !this.showAuthorSection;
         },
-        selectCategory(category) {
-            this.$emit('selectCategory', category);
+        async selectCategory(category) {
+            this.$store.dispatch('fetchBooksByCategory', category);
         },
-        selectAuthor(author) {
-            this.$emit('selectAuthor', author);
+        async selectAuthor(author) {
+            this.$store.dispatch('fetchBooksByAuthor', author);
         },
         async fetchCategories() {
-
-            try {
-                const response = await this.$axios.get('http://localhost:8080/api/categories');
-                this.categories = response.data.map(categoryData => {
-                    return new Category(categoryData.id, categoryData.name, categoryData.count);
-                });
-            } catch (error) {
-                console.error('Błąd podczas pobierania kategorii:', error);
-            }
+            this.$store.dispatch('fetchCategories');
         },
         async fetchAuthors() {
-            try {
-                const response = await this.$axios.get('http://localhost:8080/api/search/authors');
-                this.authors = response.data.map(authorData =>{
-                    return new Author(authorData.id, authorData.name,authorData.count);
-                });
-            } catch (error) {
-                console.error('Błąd podczas pobierania autorów:', error);
-            }
-        },
+            this.$store.dispatch('fetchAuthors');
+        }
     },
 };
 </script>
