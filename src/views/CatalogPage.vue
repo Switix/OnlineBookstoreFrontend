@@ -1,5 +1,4 @@
 <template>
-  <HeaderComponent @selected="handleSelectedSuggestion" />
   <div class="container mx-auto p-4">
     <div class="container mx-auto block sm:flex  ">
       <div class="sm:w-1/3 sm:max-w-xs px-4 py-1">
@@ -36,7 +35,6 @@
 
 <script>
 import BookFilterPanel from '@/components/BookFilterPanel';
-import HeaderComponent from '@/components/HeaderComponent';
 
 export default {
   mounted() {
@@ -57,7 +55,6 @@ export default {
   },
   components: {
     BookFilterPanel,
-    HeaderComponent
   }
 };
 </script>

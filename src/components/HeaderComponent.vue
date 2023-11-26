@@ -1,16 +1,19 @@
 <template>
-  <div class="relative">
-    <!-- Header z burger menu -->
-    <div class="bg-bg-200 w-full sticky top-0 flex items-center justify-between shadow-md p-4">
-      <!-- Pozostała zawartość nagłówka -->
-      <div>
-        <img class="mx-auto" src="/images/logo-icon.png" :alt="logo" />
-      </div>
+  <div class="sticky top-0 w-full z-50">
+    <div class="bg-bg-200 w-full  h-20 flex items-center justify-between shadow-md p-4">
+      <!-- Logo -->
+      <router-link to="/">
+        <div>
+          <img class="mx-auto" src="/images/logo-icon.png" :alt="logo" />
+        </div>
+      </router-link>
+
+
       <SearchBar class="grow " />
 
       <!-- Ikona osoby -->
       <div class="mr-2 mt-2">
-        <button @click="openUserData" class="text-accent focus:outline-none">
+        <button @click="toggleUserPanel" class="text-accent focus:outline-none">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
             class="w-6 h-6">
             <path stroke-linecap="round" stroke-linejoin="round"
@@ -28,9 +31,38 @@
               d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
           </svg>
         </button>
-
       </div>
     </div>
+    
+    <!-- Panel użytkownika -->
+    <transition name="slide-down">
+      <div v-if="showUserPanel" class="fixed top-20 right-0 bg-bg-300 shadow-md p-4 w-48 overflow-hidden">
+        <div v-if="!isLoggedIn">
+          <button @click="login" class="w-full bg-primary py-2 text-center hover:bg-primary-200">Zaloguj</button>
+          <RouterLink :to="'/register'">
+            <button @click="register" class="w-full bg-accent-200 py-2 text-center my-2 hover:bg-accent">Zarejestruj</button>
+          </RouterLink>
+        </div>
+        <ul class="text-md text-center">
+          <li>
+            <router-link to="/" class="block py-2 px-4 text-text hover:text-primary-200">Twoje konto</router-link>
+          </li>
+          <li>
+            <router-link to="/" class="block py-2 px-4 text-text hover:text-primary-200">Zamówienia</router-link>
+          </li>
+          <li>
+            <router-link to="/" class="block py-2 px-4 text-text hover:text-primary-200">Twoje dane</router-link>
+          </li>
+          <li>
+            <button v-if="isLoggedIn" @click="logout"
+              class="w-full bg-accent-200 text-text py-2 px-4 mt-2 hover:bg-accent-300">
+              Wyloguj się
+            </button>
+          </li>
+        </ul>
+      </div>
+    </transition>
+
   </div>
 </template>
   
@@ -38,18 +70,17 @@
 import SearchBar from '@/components/SearchBar';
 
 export default {
-  components: {
-    SearchBar, // Zarejestruj komponent SearchBar
+  computed: {
+    isLoggedIn() {
+      return this.$store.state.isLoggedIn; 
+    }
   },
   data() {
     return {
-      showMenu: false // Stan flyout menu
+      showUserPanel: false
     };
   },
   methods: {
-    toggleMenu() {
-      this.showMenu = !this.showMenu;// Przełącz stan flyout menu
-    },
     closeMenu() {
       this.showMenu = false;
 
@@ -57,35 +88,43 @@ export default {
     openCart() {
 
     },
-    openUserData() {
-
+    toggleUserPanel() {
+      this.showUserPanel = !this.showUserPanel;
+    },
+    login() {
+      this.toggleUserPanel();
+    },
+    register() {
+      this.toggleUserPanel();
+    },
+    logout() {
+      this.$store.dispatch('logout');
     }
+  },
+  components: {
+    SearchBar,
   },
 };
 </script>
   
 <style scoped>
-.slide-enter-active {
-  transition: transform 0.5s ease;
+.slide-down-enter-active,
+.slide-down-leave-active {
+  transition: height 0.2s linear;
 }
 
-.slide-enter-from {
-  transform: translateX(100%);
+.slide-down-enter-from {
+  height: 0px;
 }
 
-.slide-enter-to {
-  transform: translateX(0);
+.slide-down-enter-to {
+  height: 200px;
 }
 
-.slide-leave-active {
-  transition: transform 0.5s ease;
+.slide-down-leave-from {
+  height: 200px;
 }
 
-.slide-leave-from {
-  transform: translateX(0);
-}
-
-.slide-leave-to {
-  transform: translateX(100%);
-}
-</style>
+.slide-down-leave-to {
+  height: 0px;
+}</style>

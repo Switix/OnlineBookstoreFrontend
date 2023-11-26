@@ -12,6 +12,8 @@ export default createStore({
     suggestedAuthors: [],
     suggestedCategories: [],
     showSuggestions: false,
+    //user
+    isLoggedIn:true,
   },
   mutations: {
     SET_BOOKS(state, books) {
@@ -37,6 +39,10 @@ export default createStore({
     },
     SET_SHOW_SUGGESTIONS(state, showSuggestions) {
       state.showSuggestions = showSuggestions;
+    },
+    //user
+    SET_IS_LOGGED_IN(state,isLoggedIn){
+      state.isLoggedIn=isLoggedIn;
     }
   },
   actions: {
@@ -58,7 +64,6 @@ export default createStore({
         console.error('Błąd podczas pobierania danych:', error);
       }
     },
-
     async fetchBooksByAuthor({ commit }, author) {
       try {
         const response = await axios.get(`http://localhost:8080/api/books/authors/${author.id}`);
@@ -128,6 +133,9 @@ export default createStore({
       }
       commit('SET_SHOW_SUGGESTIONS', false);
 
+    },
+    logout({ commit }){
+      commit('SET_IS_LOGGED_IN', false);
     }
   },
   getters: {
