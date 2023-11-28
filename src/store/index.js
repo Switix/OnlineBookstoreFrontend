@@ -13,7 +13,11 @@ export default createStore({
     suggestedCategories: [],
     showSuggestions: false,
     //user
-    isLoggedIn:true,
+    isLoggedIn: true,
+    //BookPage
+    selectedBook: '',
+    similarCategoryBooks:[],
+    similarAuthorBooks:[],
   },
   mutations: {
     SET_BOOKS(state, books) {
@@ -41,9 +45,19 @@ export default createStore({
       state.showSuggestions = showSuggestions;
     },
     //user
-    SET_IS_LOGGED_IN(state,isLoggedIn){
-      state.isLoggedIn=isLoggedIn;
-    }
+    SET_IS_LOGGED_IN(state, isLoggedIn) {
+      state.isLoggedIn = isLoggedIn;
+    },
+    //BookPage
+    SET_SELECTED_BOOK(state, selectedBook) {
+      state.selectedBook = selectedBook;
+    },
+    SET_SIMILAR_CATEGORY_BOOKS(state, similarCategoryBooks){
+      state.similarCategoryBooks = similarCategoryBooks;
+    },
+    SET_SIMILAR_AUTHOR_BOOKS(state, similarAuthorBooks){
+      state.similarAuthorBooks = similarAuthorBooks;
+    },
   },
   actions: {
     async fetchBooks({ commit }) {
@@ -134,11 +148,31 @@ export default createStore({
       commit('SET_SHOW_SUGGESTIONS', false);
 
     },
-    logout({ commit }){
+    //user
+    logout({ commit }) {
       commit('SET_IS_LOGGED_IN', false);
-    }
+    },
+    //BookPage
+    async fetchBookAndSimilar({ commit }, bookId) {
+      try {
+        const response = await axios.get('http://localhost:8080/api/books/' + bookId);
+        commit('SET_SELECTED_BOOK', response.data);
+        const responseCategory = await axios.get(`http://localhost:8080/api/books/categories/${response.data.category.id}`);
+        commit('SET_SIMILAR_CATEGORY_BOOKS', responseCategory.data);
+        const responseAuthors = await axios.get(`http://localhost:8080/api/books/authors/${response.data.bookAuthors[0].id}`);
+        commit('SET_SIMILAR_AUTHOR_BOOKS', responseAuthors.data);
+      } catch (error) {
+        console.error('Błąd podczas pobierania danych:', error);
+      }     
+    },
   },
   getters: {
+    similarCategoryBooks (state)   {
+      return state.similarCategoryBooks.filter(book =>book.title != state.selectedBook.title);
+    },
+    similarAuthorBooks(state)   {
+      return state.similarAuthorBooks.filter(book =>book.title != state.selectedBook.title);
+    }
   },
   modules: {
   }
