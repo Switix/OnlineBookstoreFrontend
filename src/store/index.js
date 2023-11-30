@@ -16,8 +16,8 @@ export default createStore({
     isLoggedIn: true,
     //BookPage
     selectedBook: '',
-    similarCategoryBooks:[],
-    similarAuthorBooks:[],
+    similarCategoryBooks: [],
+    similarAuthorBooks: [],
   },
   mutations: {
     SET_BOOKS(state, books) {
@@ -52,10 +52,10 @@ export default createStore({
     SET_SELECTED_BOOK(state, selectedBook) {
       state.selectedBook = selectedBook;
     },
-    SET_SIMILAR_CATEGORY_BOOKS(state, similarCategoryBooks){
+    SET_SIMILAR_CATEGORY_BOOKS(state, similarCategoryBooks) {
       state.similarCategoryBooks = similarCategoryBooks;
     },
-    SET_SIMILAR_AUTHOR_BOOKS(state, similarAuthorBooks){
+    SET_SIMILAR_AUTHOR_BOOKS(state, similarAuthorBooks) {
       state.similarAuthorBooks = similarAuthorBooks;
     },
   },
@@ -63,7 +63,13 @@ export default createStore({
     async fetchBooks({ commit }) {
       try {
         const response = await axios.get('http://localhost:8080/api/books');
-        commit('SET_BOOKS', response.data);
+        const books = response.data;
+
+        // Przeiteruj przez każdą książkę i pobierz obraz na podstawie URL
+        for (const book of books) {
+          await fetchAndSetBookImage(book);
+        }
+        commit('SET_BOOKS', books);
         commit('SET_CATALOG_TITLE', 'Książki');
       } catch (error) {
         console.error('Błąd podczas pobierania danych:', error);
@@ -72,7 +78,14 @@ export default createStore({
     async fetchBooksByCategory({ commit }, category) {
       try {
         const response = await axios.get(`http://localhost:8080/api/books/categories/${category.id}`);
-        commit('SET_BOOKS', response.data);
+
+        const books = response.data;
+
+        // Przeiteruj przez każdą książkę i pobierz obraz na podstawie URL
+        for (const book of books) {
+          await fetchAndSetBookImage(book);
+        }
+        commit('SET_BOOKS', books);
         commit('SET_CATALOG_TITLE', `Książki w kategorii ${category.name}`);
       } catch (error) {
         console.error('Błąd podczas pobierania danych:', error);
@@ -81,7 +94,13 @@ export default createStore({
     async fetchBooksByAuthor({ commit }, author) {
       try {
         const response = await axios.get(`http://localhost:8080/api/books/authors/${author.id}`);
-        commit('SET_BOOKS', response.data);
+        const books = response.data;
+
+        // Przeiteruj przez każdą książkę i pobierz obraz na podstawie URL
+        for (const book of books) {
+          await fetchAndSetBookImage(book);
+        }
+        commit('SET_BOOKS', books);
         commit('SET_CATALOG_TITLE', `Książki autorstwa ${author.name}`);
       } catch (error) {
         console.error('Błąd podczas pobierania danych:', error);
@@ -129,7 +148,13 @@ export default createStore({
       const fetchData = async (url) => {
         try {
           const response = await axios.get(url + selected.id);
-          commit('SET_BOOKS', response.data);
+          const books = response.data;
+
+        // Przeiteruj przez każdą książkę i pobierz obraz na podstawie URL
+        for (const book of books) {
+          await fetchAndSetBookImage(book);
+        }
+          commit('SET_BOOKS', books);
         }
         catch (error) {
           console.error('Błąd podczas pobierania danych:', error);
@@ -156,24 +181,48 @@ export default createStore({
     async fetchBookAndSimilar({ commit }, bookId) {
       try {
         const response = await axios.get('http://localhost:8080/api/books/' + bookId);
-        commit('SET_SELECTED_BOOK', response.data);
-        const responseCategory = await axios.get(`http://localhost:8080/api/books/categories/${response.data.category.id}`);
-        commit('SET_SIMILAR_CATEGORY_BOOKS', responseCategory.data);
-        const responseAuthors = await axios.get(`http://localhost:8080/api/books/authors/${response.data.bookAuthors[0].id}`);
-        commit('SET_SIMILAR_AUTHOR_BOOKS', responseAuthors.data);
+        const selectedBook = response.data;
+        await fetchAndSetBookImage(selectedBook);
+        commit('SET_SELECTED_BOOK', selectedBook);
+
+        const responseCategory = await axios.get(`http://localhost:8080/api/books/categories/${selectedBook.category.id}`);
+        const selectedBooksCategory = responseCategory.data;
+        for (const book of selectedBooksCategory) {
+          await fetchAndSetBookImage(book);
+        }
+        commit('SET_SIMILAR_CATEGORY_BOOKS', selectedBooksCategory);
+
+        const responseAuthors = await axios.get(`http://localhost:8080/api/books/authors/${selectedBook.bookAuthors[0].id}`);
+        const selectedBooksAuthors = responseAuthors.data;
+        for (const book of selectedBooksAuthors) {
+          await fetchAndSetBookImage(book);
+        }
+        commit('SET_SIMILAR_AUTHOR_BOOKS', selectedBooksAuthors);
       } catch (error) {
         console.error('Błąd podczas pobierania danych:', error);
-      }     
+      }
     },
   },
   getters: {
-    similarCategoryBooks (state)   {
-      return state.similarCategoryBooks.filter(book =>book.title != state.selectedBook.title);
+    similarCategoryBooks(state) {
+      return state.similarCategoryBooks.filter(book => book.title != state.selectedBook.title);
     },
-    similarAuthorBooks(state)   {
-      return state.similarAuthorBooks.filter(book =>book.title != state.selectedBook.title);
+    similarAuthorBooks(state) {
+      return state.similarAuthorBooks.filter(book => book.title != state.selectedBook.title);
     }
   },
   modules: {
-  }
+  },
+
 })
+async function fetchAndSetBookImage(book) {
+  try {
+    const imageResponse = await axios.get('http://localhost:8080/api/images/' + book.imageUrl, {
+      responseType: 'blob'
+    });
+
+    book.img = URL.createObjectURL(imageResponse.data);
+  } catch (error) {
+    console.error(`Błąd pobierania obrazu dla książki ${book.id}:`, error);
+  }
+}

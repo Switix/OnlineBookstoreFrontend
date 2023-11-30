@@ -2,10 +2,8 @@
   <div class="sticky top-0 w-full z-50">
     <div class="bg-bg-200 w-full  h-20 flex items-center justify-between shadow-md p-4">
       <!-- Logo -->
-      <router-link to="/">
-        <div>
-          <img class="mx-auto" src="/images/logo-icon.png" :alt="logo" />
-        </div>
+      <router-link to="/" @click="fetchBooks">
+        <img class="mx-auto" src="/images/logo-icon.png" alt="logo" />
       </router-link>
 
 
@@ -33,14 +31,15 @@
         </button>
       </div>
     </div>
-    
+
     <!-- Panel użytkownika -->
     <transition name="slide-down">
       <div v-if="showUserPanel" class="fixed top-20 right-0 bg-bg-300 shadow-md p-4 w-48 overflow-hidden">
         <div v-if="!isLoggedIn">
           <button @click="login" class="w-full bg-primary py-2 text-center hover:bg-primary-200">Zaloguj</button>
           <RouterLink :to="'/register'">
-            <button @click="register" class="w-full bg-accent-200 py-2 text-center my-2 hover:bg-accent">Zarejestruj</button>
+            <button @click="register"
+              class="w-full bg-accent-200 py-2 text-center my-2 hover:bg-accent">Zarejestruj</button>
           </RouterLink>
         </div>
         <ul class="text-md text-center">
@@ -72,7 +71,7 @@ import SearchBar from '@/components/SearchBar';
 export default {
   computed: {
     isLoggedIn() {
-      return this.$store.state.isLoggedIn; 
+      return this.$store.state.isLoggedIn;
     }
   },
   data() {
@@ -81,12 +80,14 @@ export default {
     };
   },
   methods: {
+    fetchBooks(){
+      this.$store.dispatch('fetchBooks');
+    },
     closeMenu() {
       this.showMenu = false;
-
     },
     openCart() {
-
+  
     },
     toggleUserPanel() {
       this.showUserPanel = !this.showUserPanel;
@@ -127,4 +128,5 @@ export default {
 
 .slide-down-leave-to {
   height: 0px;
-}</style>
+}
+</style>

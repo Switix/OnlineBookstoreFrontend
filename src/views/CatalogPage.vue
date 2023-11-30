@@ -15,7 +15,7 @@
               <div class="bg-bg-200 rounded-lg overflow-hidden flex flex-col  h-full">
                 <!-- Zdjęcie książki -->
                 <div>
-                  <img class="object-cover mx-auto  " src="/images/cover.jpg" :alt="book.title" />
+                  <img class="object-cover mx-auto " :src="book.img" :alt="book.title" />
                 </div>
                 <div class="p-2 text-center flex flex-col justify-around">
                   <!-- Tytuł książki -->
@@ -39,20 +39,16 @@
 import BookFilterPanel from '@/components/BookFilterPanel';
 
 export default {
-  mounted() {
-    this.fetchBooks();
+  created() {
+    this.$store.dispatch('fetchBooks');
   },
+
   computed: {
     books() {
       return this.$store.state.books;
     },
     catalogTitle() {
       return this.$store.state.catalogTitle;
-    },
-  },
-  methods: {
-    async fetchBooks() {
-      this.$store.dispatch('fetchBooks');
     },
   },
   components: {

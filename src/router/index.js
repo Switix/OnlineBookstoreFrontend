@@ -2,12 +2,12 @@ import { createRouter, createWebHistory } from 'vue-router'
 import CatalogPage from '../views/CatalogPage.vue'
 import RegisterPage from '../views/RegisterPage.vue'
 import BookPage from '../views/BookPage.vue'
-
 const routes = [
   {
     path: '/',
     name: 'home',
-    component: CatalogPage
+    component: CatalogPage,
+ 
   },
   {
     path: '/register',
