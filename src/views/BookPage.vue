@@ -65,7 +65,7 @@
                             Przejdź do koszyka
                         </button>
                         <!-- Kontynuuj zakupy -->
-                        <button @click="closeConfirmation('continueShopping')"
+                        <button @click="closeConfirmation('close')"
                             class="px-4 py-2 border border-[#3f434c] text-text text-lg w-full rounded-md">
                             Kontynuuj zakupy
                         </button>
