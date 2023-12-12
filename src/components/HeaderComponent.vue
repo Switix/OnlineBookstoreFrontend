@@ -20,6 +20,7 @@
         </button>
       </div>
 
+
       <!-- Ikona koszyka -->
       <div class="mx-2 mt-2">
         <button @click="openCart" class="text-accent focus:outline-none">
@@ -36,7 +37,9 @@
     <transition name="slide-down">
       <div v-if="showUserPanel" class="fixed top-20 right-0 bg-bg-300 shadow-md p-4 w-48 overflow-hidden">
         <div v-if="!isLoggedIn">
-          <button @click="login" class="w-full bg-primary py-2 text-center hover:bg-primary-200">Zaloguj</button>
+          <RouterLink :to="'/login'">
+            <button @click="login" class="w-full bg-primary py-2 text-center hover:bg-primary-200">Zaloguj</button>
+          </RouterLink>
           <RouterLink :to="'/register'">
             <button @click="register"
               class="w-full bg-accent-200 py-2 text-center my-2 hover:bg-accent">Zarejestruj</button>
@@ -80,14 +83,14 @@ export default {
     };
   },
   methods: {
-    fetchBooks(){
+    fetchBooks() {
       this.$store.dispatch('fetchBooks');
     },
     closeMenu() {
       this.showMenu = false;
     },
     openCart() {
-  
+
     },
     toggleUserPanel() {
       this.showUserPanel = !this.showUserPanel;

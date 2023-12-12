@@ -3,7 +3,7 @@ module.exports = {
   content: ['./public/**/*.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
   theme: {
     extend: {
-      backgroundColor: {
+      colors: {
         'bg':{
           DEFAULT:'#181C24',
           200:'#272b33',

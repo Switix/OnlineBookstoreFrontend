@@ -2,6 +2,7 @@ import { createStore } from 'vuex'
 import axios from 'axios'
 import Category from '../components/model/Category';
 import Author from '../components/model/Author';
+import User from '../components/model/User';
 
 export default createStore({
   state: {
@@ -13,7 +14,9 @@ export default createStore({
     suggestedCategories: [],
     showSuggestions: false,
     //user
-    isLoggedIn: true,
+    isLoggedIn: false,
+    user: null,
+    loginError: '',
     //BookPage
     selectedBook: '',
     similarCategoryBooks: [],
@@ -47,6 +50,12 @@ export default createStore({
     //user
     SET_IS_LOGGED_IN(state, isLoggedIn) {
       state.isLoggedIn = isLoggedIn;
+    },
+    SET_USER(state, user) {
+      state.user = user;
+    },
+    SET_LOGIN_ERROR(state, errorMessage) {
+      state.loginError = errorMessage;
     },
     //BookPage
     SET_SELECTED_BOOK(state, selectedBook) {
@@ -150,10 +159,10 @@ export default createStore({
           const response = await axios.get(url + selected.id);
           const books = response.data;
 
-        // Przeiteruj przez każdą książkę i pobierz obraz na podstawie URL
-        for (const book of books) {
-          await fetchAndSetBookImage(book);
-        }
+          // Przeiteruj przez każdą książkę i pobierz obraz na podstawie URL
+          for (const book of books) {
+            await fetchAndSetBookImage(book);
+          }
           commit('SET_BOOKS', books);
         }
         catch (error) {
@@ -176,6 +185,32 @@ export default createStore({
     //user
     logout({ commit }) {
       commit('SET_IS_LOGGED_IN', false);
+    },
+    async login({ commit }, userData) {
+      await axios.post('http://localhost:8080/api/auth/login', userData, {
+        withCredentials: true
+      })
+        .then(response => {
+          const user = new User(
+            response.data.id,
+            response.data.username,
+            response.data.email,
+            response.data.role
+          );
+          commit('SET_USER', user);
+          commit('SET_IS_LOGGED_IN', true);
+          commit('SET_LOGIN_ERROR', '');
+        })
+        .catch(() => {
+          commit('SET_USER', null);
+          commit('SET_IS_LOGGED_IN', false);
+          commit('SET_LOGIN_ERROR', 'Błędne dane logowania. Spróbuj ponownie.');
+
+        });
+
+    },
+    clearLoginError({ commit }) {
+      commit('SET_LOGIN_ERROR', ''); 
     },
     //BookPage
     async fetchBookAndSimilar({ commit }, bookId) {
