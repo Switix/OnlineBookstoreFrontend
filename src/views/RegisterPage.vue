@@ -1,47 +1,131 @@
 <template>
-    <div >
-        <form v-on:submit.prevent="register">
-            <label for="username">Username</label>
-            <input type="text" class="form-control" id="username" placeholder="Username" v-model="form.username">
-            <label for="email">Email</label>
-            <input type="text" class="form-control" id="email" placeholder="Email" v-model="form.email">
-            <label for="password">Password</label>
-            <input type="password" class="form-control" id="password" placeholder="Password" v-model="form.password">
-            <button>Submit</button>
-        </form>
-
+    <div class="flex items-center justify-center h-screen bg-bg">
+        <div class="max-w-md w-full mx-4 p-6 bg-bg-200 rounded-lg shadow-md flex flex-col">
+            <h2 class="text-2xl font-bold text-center mb-4">Rejestracja</h2>
+            <form @submit.prevent="register" class="space-y-4">
+                <div>
+                    <label for="username" class="block font-semibold">Imię i nazwisko</label>
+                    <input v-model="username" type="text" id="username" name="username" class="w-full p-2 bg-bg border ring-white text-text-200  rounded-md focus:border-primary-200 focus:ring-1 focus:ring-primary-200  outline-none" required>
+                </div>
+                <div>
+                    <label for="email" class="block font-semibold">Email</label>
+                    <input v-model="email" @input="validateEmail" type="email" id="email" name="email"
+                        class="w-full p-2 bg-bg border outline-none rounded-md focus:ring-1 " :class="{
+                            'border-accent text-accent focus:border-accent focus:ring-accent': emailError,
+                            ' border-white focus:border-primary-200  focus:ring-primary-200': !emailError
+                        }">
+                    <p v-if="emailError" class="text-accent text-sm -mb-3 ">{{ emailError }}</p>
+                </div>
+                <div>
+                    <label for="password" class="block font-semibold">Hasło</label>
+                    <input v-model="password" type="password" id="password" @focusout="validatePassword" name="password"
+                        class="w-full p-2 bg-bg border rounded-md focus:ring-1 outline-none" :class="{
+                            'border-accent text-accent focus:border-accent focus:ring-accent': (passwordMismatch || !isPasswordValid),
+                            'border-white focus:border-primary-200 focus:ring-primary-200': (!passwordMismatch && isPasswordValid)
+                        }" required>
+                    <p v-if="!isPasswordValid" class="text-accent text-sm -mb-1"> Twoje hasło musi zawierać co najmniej 8
+                        znaków, w tym przynajmniej jedną cyfrę,
+                        jedną dużą i jedną małą literę oraz co najmniej jeden znak specjalny. Upewnij się, że hasło nie
+                        zawiera spacji.</p>
+                </div>
+                <div>
+                    <label for="repeatPassword" class="block font-semibold">Powtórz hasło</label>
+                    <input v-model="repeatPassword" type="password" id="repeatPassword" name="repeatPassword"
+                        class="w-full p-2 bg-bg border rounded-md focus:ring-1 outline-none" :class="{
+                            'border-accent text-accent focus:border-accent focus:ring-accent': passwordMismatch,
+                            'border-white focus:border-primary-200 focus:ring-primary-200': !passwordMismatch
+                        }" required>
+                    <p v-if="passwordMismatch" class="text-accent text-sm -mb-1">Hasła nie są takie same.</p>
+                </div>
+                <div>
+                    <button type="submit" class="w-full bg-primary text-text py-2 rounded-md hover:bg-blue-600">Zarejestruj
+                        się</button>
+                </div>
+            </form>
+        </div>
     </div>
-  </template>
+</template>
   
-  <script>
-  export default {
-    name: 'RegisterPage',
-    data(){
-        return{
-            form: {
-                username: '',
-                email: '',
-                password:''
-            }
+<script>
+import _ from 'lodash';
+export default {
+    data() {
+        return {
+            username: '',
+            email: '',
+            password: '',
+            repeatPassword: '',
+            passwordMismatch: false,
+            isPasswordValid: true,
+            validateEmailFn: _.debounce(function () {
+                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailPattern.test(this.email)) {
+                    this.$store.dispatch('setEmailError', 'Wprowadź poprawny adres email.');
+                } else {
+                    this.$store.dispatch('setEmailError', '');
+                }
+            }, 500),
+        };
+    },
+    mounted() {
+        this.$store.dispatch('setEmailError', '');
+    },
+    computed: {
+        emailError() {
+            return this.$store.state.emailError;
         }
     },
-    methods:{
-        register(){
-            this.$axios.post('http://localhost:8080/api/auth/register', this.form)
-                 .then((res)  => {
-                     console.log(res);
-                 })
-                 .catch((error) => {
-                    console.log(error);
-                 }).finally(() => {
-                     //Perform action in always
-                 });
+    methods: {
+        validateEmail() {
+            this.$store.dispatch('setEmailError', '');
+            this.validateEmailFn();
+        },
+        validatePassword(){
+            // Password requirements check
+            const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+~\-=`{}[\]:;"'<>,.?\\/])(?=.*[^\s]).{8,}$/;
+
+            if (!passwordRegex.test(this.password) && this.password!=='') {
+                this.isPasswordValid = false;
+                return;
+            }
+            this.isPasswordValid = true;
+        },
+
+       async register() {
+            this.$store.dispatch('setEmailError', '');
+            this.validatePassword();
+            if(!this.isPasswordValid){
+                return;
+            }
+   
+            if (this.password !== this.repeatPassword && this.repeatPassword !== '') {
+                this.passwordMismatch = true;
+                return;
+            }
+            this.passwordMismatch = false;
+
+
+            const userData = {
+                email: this.email,
+                username: this.username,
+                password: this.password
+            };
+            await this.$store.dispatch('register', userData);
         }
     }
-  }
-  </script>
-  
-  <style scoped>
+};
 
-  </style>
+
+
+</script>
   
+<style>
+input:autofill {
+    -webkit-text-fill-color: theme('textColor.text.200');
+    caret-color: theme('textColor.text.200');
+    box-shadow: inset 0 0 0 1000px theme('colors.bg.DEFAULT') !important;
+}
+input:autofill:focus {
+    box-shadow: inset 0 0 0 1000px theme('colors.bg.DEFAULT'),0 0 0 1px theme('colors.primary.200') !important ; 
+}
+</style>

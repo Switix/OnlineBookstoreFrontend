@@ -3,6 +3,7 @@ import axios from 'axios'
 import Category from '../components/model/Category';
 import Author from '../components/model/Author';
 import User from '../components/model/User';
+import router from '../router';
 
 export default createStore({
   state: {
@@ -17,6 +18,7 @@ export default createStore({
     isLoggedIn: false,
     user: null,
     loginError: '',
+    emailError: '',
     //BookPage
     selectedBook: '',
     similarCategoryBooks: [],
@@ -56,6 +58,9 @@ export default createStore({
     },
     SET_LOGIN_ERROR(state, errorMessage) {
       state.loginError = errorMessage;
+    },
+    SET_EMAIL_ERROR(state, emailError) {
+      state.emailError = emailError;
     },
     //BookPage
     SET_SELECTED_BOOK(state, selectedBook) {
@@ -209,8 +214,32 @@ export default createStore({
         });
 
     },
+    async register({ commit }, userData) {
+      await axios.post('http://localhost:8080/api/auth/register', userData, { withCredentials: true })
+        .then((response) => {
+          const user = new User(
+            response.data.id,
+            response.data.username,
+            response.data.email,
+            response.data.role
+          );
+          commit('SET_USER', user);
+          commit('SET_IS_LOGGED_IN', true);
+          commit('SET_EMAIL_ERROR', '');
+          router.push('/');
+        })
+        .catch((error) => {
+          if (error.response.status == 409) {
+            commit('SET_EMAIL_ERROR', 'Ten Email jest już używany');
+          }
+
+        });
+    },
+    setEmailError({ commit }, emailError) {
+      commit('SET_EMAIL_ERROR', emailError);
+    },
     clearLoginError({ commit }) {
-      commit('SET_LOGIN_ERROR', ''); 
+      commit('SET_LOGIN_ERROR', '');
     },
     //BookPage
     async fetchBookAndSimilar({ commit }, bookId) {
