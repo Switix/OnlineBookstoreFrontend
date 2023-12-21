@@ -188,8 +188,16 @@ export default createStore({
 
     },
     //user
-    logout({ commit }) {
-      commit('SET_IS_LOGGED_IN', false);
+    async logout({ commit }) {
+
+      await axios.post('http://localhost:8080/api/auth/logout', {}, { withCredentials: true })
+        .then(() => {
+          commit('SET_USER', null);
+          commit('SET_IS_LOGGED_IN', false);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
     async login({ commit }, userData) {
       await axios.post('http://localhost:8080/api/auth/login', userData, {
@@ -232,7 +240,6 @@ export default createStore({
           if (error.response.status == 409) {
             commit('SET_EMAIL_ERROR', 'Ten Email jest już używany');
           }
-
         });
     },
     setEmailError({ commit }, emailError) {
