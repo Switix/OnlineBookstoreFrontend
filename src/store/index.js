@@ -206,7 +206,8 @@ export default createStore({
         .then(response => {
           const user = new User(
             response.data.id,
-            response.data.username,
+            response.data.name,
+            response.data.lastname,
             response.data.email,
             response.data.role
           );
@@ -227,7 +228,8 @@ export default createStore({
         .then((response) => {
           const user = new User(
             response.data.id,
-            response.data.username,
+            response.data.name,
+            response.data.lastname,
             response.data.email,
             response.data.role
           );

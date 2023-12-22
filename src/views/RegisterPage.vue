@@ -4,8 +4,16 @@
             <h2 class="text-2xl font-bold text-center mb-4">Rejestracja</h2>
             <form @submit.prevent="register" class="space-y-4">
                 <div>
-                    <label for="username" class="block font-semibold">Imię i nazwisko</label>
-                    <input v-model="username" type="text" id="username" name="username" class="w-full p-2 bg-bg border ring-white text-text-200  rounded-md focus:border-primary-200 focus:ring-1 focus:ring-primary-200  outline-none" required>
+                    <label for="name" class="block font-semibold">Imię</label>
+                    <input v-model="name" type="text" id="name" name="name"
+                        class="w-full p-2 bg-bg border ring-white text-text-200  rounded-md focus:border-primary-200 focus:ring-1 focus:ring-primary-200  outline-none"
+                        required>
+                </div>
+                <div>
+                    <label for="lastname" class="block font-semibold">Nazwisko</label>
+                    <input v-model="lastname" type="text" id="lastname" name="lastname"
+                        class="w-full p-2 bg-bg border ring-white text-text-200  rounded-md focus:border-primary-200 focus:ring-1 focus:ring-primary-200  outline-none"
+                        required>
                 </div>
                 <div>
                     <label for="email" class="block font-semibold">Email</label>
@@ -51,7 +59,8 @@ import _ from 'lodash';
 export default {
     data() {
         return {
-            username: '',
+            name: '',
+            lastname: '',
             email: '',
             password: '',
             repeatPassword: '',
@@ -80,24 +89,24 @@ export default {
             this.$store.dispatch('setEmailError', '');
             this.validateEmailFn();
         },
-        validatePassword(){
+        validatePassword() {
             // Password requirements check
             const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+~\-=`{}[\]:;"'<>,.?\\/])(?=.*[^\s]).{8,}$/;
 
-            if (!passwordRegex.test(this.password) && this.password!=='') {
+            if (!passwordRegex.test(this.password) && this.password !== '') {
                 this.isPasswordValid = false;
                 return;
             }
             this.isPasswordValid = true;
         },
 
-       async register() {
+        async register() {
             this.$store.dispatch('setEmailError', '');
             this.validatePassword();
-            if(!this.isPasswordValid){
+            if (!this.isPasswordValid) {
                 return;
             }
-   
+
             if (this.password !== this.repeatPassword && this.repeatPassword !== '') {
                 this.passwordMismatch = true;
                 return;
@@ -107,7 +116,8 @@ export default {
 
             const userData = {
                 email: this.email,
-                username: this.username,
+                name: this.name,
+                lastname: this.lastname,
                 password: this.password
             };
             await this.$store.dispatch('register', userData);
@@ -125,7 +135,8 @@ input:autofill {
     caret-color: theme('textColor.text.200');
     box-shadow: inset 0 0 0 1000px theme('colors.bg.DEFAULT') !important;
 }
+
 input:autofill:focus {
-    box-shadow: inset 0 0 0 1000px theme('colors.bg.DEFAULT'),0 0 0 1px theme('colors.primary.200') !important ; 
+    box-shadow: inset 0 0 0 1000px theme('colors.bg.DEFAULT'), 0 0 0 1px theme('colors.primary.200') !important;
 }
 </style>
