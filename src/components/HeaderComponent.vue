@@ -38,22 +38,22 @@
       <div v-if="showUserPanel" class="fixed top-20 right-0 bg-bg-300 shadow-md p-4 w-48 overflow-hidden">
         <div v-if="!isLoggedIn">
           <RouterLink :to="'/login'">
-            <button @click="login" class="w-full bg-primary py-2 text-center hover:bg-primary-200">Zaloguj</button>
+            <button @click="toggleUserPanel" class="w-full bg-primary py-2 text-center hover:bg-primary-200">Zaloguj</button>
           </RouterLink>
-          <RouterLink :to="'/register'">
-            <button @click="register"
+          <RouterLink :to="'/register'" >
+            <button @click="toggleUserPanel"
               class="w-full bg-accent-200 py-2 text-center my-2 hover:bg-accent">Zarejestruj</button>
           </RouterLink>
         </div>
         <ul class="text-md text-center">
           <li>
-            <router-link to="/" class="block py-2 px-4 text-text hover:text-primary-200">Twoje konto</router-link>
+            <router-link @click="toggleUserPanel" to="/" class="block py-2 px-4 text-text hover:text-primary-200">Twoje konto</router-link>
           </li>
           <li>
-            <router-link to="/" class="block py-2 px-4 text-text hover:text-primary-200">Zamówienia</router-link>
+            <router-link @click="toggleUserPanel" to="/" class="block py-2 px-4 text-text hover:text-primary-200">Zamówienia</router-link>
           </li>
           <li>
-            <router-link to="/" class="block py-2 px-4 text-text hover:text-primary-200">Twoje dane</router-link>
+            <router-link @click="toggleUserPanel" to="/profile" class="block py-2 px-4 text-text hover:text-primary-200">Twoje dane</router-link>
           </li>
           <li>
             <button v-if="isLoggedIn" @click="logout"
@@ -86,23 +86,15 @@ export default {
     fetchBooks() {
       this.$store.dispatch('fetchBooks');
     },
-    closeMenu() {
-      this.showMenu = false;
-    },
     openCart() {
 
     },
     toggleUserPanel() {
       this.showUserPanel = !this.showUserPanel;
     },
-    login() {
-      this.toggleUserPanel();
-    },
-    register() {
-      this.toggleUserPanel();
-    },
     logout() {
       this.$store.dispatch('logout');
+
     }
   },
   components: {

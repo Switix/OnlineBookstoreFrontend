@@ -1,0 +1,191 @@
+<template>
+    <div class="flex items-center justify-center py-4 bg-bg">
+        <div class="max-w-md w-full space-y-4  flex flex-col">
+            <div class="space-y-4 bg-bg-200 rounded-lg mx-4 shadow-md p-6 ">
+                <h2 class="text-2xl font-bold text-center mb-4">Edycja Profilu</h2>
+                <form @submit.prevent="updateProfile" class="space-y-4">
+                    <div>
+                        <label for="name" class="block font-semibold">Imię</label>
+                        <input v-model="profileChange.name" @input="validateName" type="text" id="name" name="name"
+                            class="w-full p-2 bg-bg border rounded-md focus:ring-1 outline-none" :class="{
+                                'border-accent text-accent focus:border-accent focus:ring-accent': profileChangeErrors.nameError,
+                                'border-white focus:border-primary-200  focus:ring-primary-200': !profileChangeErrors.nameError
+                            }">
+                        <p v-if="profileChangeErrors.nameError" class="text-accent text-sm -mb-3 ">{{
+                            profileChangeErrors.nameError }}</p>
+                    </div>
+                    <div>
+                        <label for="lastname" class="block font-semibold">Nazwisko</label>
+                        <input v-model="profileChange.lastname" @input="validateLastname" type="text" id="lastname"
+                            name="lastname" class="w-full p-2 bg-bg border rounded-md focus:ring-1 outline-none" :class="{
+                                'border-accent text-accent focus:border-accent focus:ring-accent': profileChangeErrors.lastnameError,
+                                'border-white focus:border-primary-200 focus:ring-primary-200': !profileChangeErrors.lastnameError
+                            }">
+                        <p v-if="profileChangeErrors.lastnameError" class="text-accent text-sm -mb-3 ">
+                            {{ profileChangeErrors.lastnameError }}</p>
+                    </div>
+                    <div>
+                        <label for="email" class="block font-semibold">Adres e-mail</label>
+                        <input v-model="user.email" disabled type="email" id="email" name="email"
+                            class="w-full p-2 opacity-70 bg-bg border  text-text-200 rounded-md ">
+                    </div>
+                    <div>
+                        <label for="newEmail" class="block font-semibold">Nowy adres e-mail</label>
+                        <input v-model="profileChange.newEmail" @input="validateEmail" type="email" id="newEmail"
+                            name="newEmail" class="w-full p-2 bg-bg border rounded-md focus:ring-1 outline-none" :class="{
+                                'border-accent text-accent focus:border-accent focus:ring-accent': profileChangeErrors.newEmailError,
+                                'border-white focus:border-primary-200  focus:ring-primary-200': !profileChangeErrors.newEmailError
+                            }">
+                        <p v-if="profileChangeErrors.newEmailError" class="text-accent text-sm -mb-3 ">{{
+                            profileChangeErrors.newEmailError }}</p>
+                    </div>
+                    <div>
+                        <label for="password" class="block font-semibold">Aktualne hasło</label>
+                        <input v-model="profileChange.password" type="password" id="password" name="password"
+                            class="w-full p-2 bg-bg border rounded-md focus:ring-1 outline-none" :class="{
+                                'border-accent text-accent focus:border-accent focus:ring-accent': profileChangeErrors.passwordError,
+                                'border-white focus:border-primary-200  focus:ring-primary-200': !profileChangeErrors.passwordError
+                            }">
+                        <p v-if="profileChangeErrors.passwordError" class="text-accent text-sm -mb-3">{{
+                            profileChangeErrors.passwordError }}</p>
+                    </div>
+
+                    <div class="flex justify-end">
+                        <button type="submit" class="px-4 py-2 bg-primary text-text rounded-md hover:bg-primary-200">
+                            Zapisz zmiany
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="space-y-4 bg-bg-200 rounded-lg mx-4 shadow-md p-6 ">
+                <h2 class="text-2xl font-bold text-center mb-4">Zmiana hasła</h2>
+                <form @submit.prevent="updatePassword" class="space-y-4">
+
+                    <div>
+                        <label for="password" class="block font-semibold">Aktualne hasło</label>
+                        <input v-model="passwordChange.password" type="password" id="password" name="password"
+                            class="w-full p-2 bg-bg border ring-white text-text-200 rounded-md focus:border-primary-200 focus:ring-1 focus:ring-primary-200 outline-none">
+                    </div>
+                    <div>
+                        <label for="newPassword" class="block font-semibold">Nowe hasło</label>
+                        <input v-model="passwordChange.newPassword" type="password" id="newPassword" name="newPassword"
+                            class="w-full p-2 bg-bg border ring-white text-text-200 rounded-md focus:border-primary-200 focus:ring-1 focus:ring-primary-200 outline-none">
+                    </div>
+                    <div>
+                        <label for="newPasswordRepeat" class="block font-semibold">Powtórz nowe hasło</label>
+                        <input v-model="passwordChange.newPasswordRepeat" type="password" id="newPasswordRepeat"
+                            name="newPasswordRepeat"
+                            class="w-full p-2 bg-bg border ring-white text-text-200 rounded-md focus:border-primary-200 focus:ring-1 focus:ring-primary-200 outline-none">
+                    </div>
+                    <div class="flex justify-end">
+                        <button type="submit" class="px-4 py-2 bg-primary text-text rounded-md hover:bg-primary-200">
+                            Zapisz hasło
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</template>
+  
+<script>
+import _ from 'lodash';
+export default {
+    computed: {
+        user() {
+            return this.$store.state.user;
+        },
+        profileChange() {
+            return {
+                name: this.user.name,
+                lastname: this.user.lastname,
+                email: this.user.email,
+                password: '',
+                newEmail: '',
+            };
+        },
+
+        passwordChange() {
+            return {
+                email: this.user.email,
+                password: '',
+                newPassword: '',
+                newPasswordRepeat: '',
+            };
+        },
+    },
+    data() {
+        return {
+            profileChangeErrors: {
+                nameError: '',
+                lastnameError: '',
+                passwordError: '',
+                newEmailError: '',
+            },
+            passwordMismatch: false,
+            isPasswordValid: true,
+            validateEmailFn: _.debounce(function () {
+                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+                if (this.profileChange.newEmail === '') {
+                    this.profileChangeErrors.newEmailError = '';
+                }
+                else if (!emailPattern.test(this.profileChange.newEmail)) {
+                    this.profileChangeErrors.newEmailError = 'Wprowadź poprawny adres email.';
+                }
+                else {
+                    this.profileChangeErrors.newEmailError = '';
+                }
+            }, 500),
+        };
+    },
+    methods: {
+        validateEmail() {
+            this.profileChangeErrors.newEmailError = '';
+            this.validateEmailFn();
+        },
+        validateName() {
+            if (this.profileChange.name.trim() === '') {
+                this.profileChangeErrors.nameError = 'Imię nie może być puste'
+            }
+            else this.profileChangeErrors.nameError = '';
+        },
+        validateLastname() {
+            if (this.profileChange.lastname.trim() === '') {
+                this.profileChangeErrors.lastnameError = 'Nazwisko nie może być puste'
+            }
+            else this.profileChangeErrors.lastnameError = '';
+        },
+        validatePassword() {
+            // Password requirements check
+            const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+~\-=`{}[\]:;"'<>,.?\\/])(?=.*[^\s]).{8,}$/;
+
+            if (!passwordRegex.test(this.password) && this.password !== '') {
+                this.isPasswordValid = false;
+                return;
+            }
+            this.isPasswordValid = true;
+        },
+        updateProfile() {
+            if (this.profileChangeErrors.lastnameError != '' || this.profileChangeErrors.nameError != ''
+                || this.profileChangeErrors.newEmailError != '' || this.profileChangeErrors.passwordError != '') {
+                return;
+            }
+
+            console.log('Zapisano zmiany:', this.profileChange.name, this.user.name);
+
+        },
+        updatePassword() {
+            console.log('Zapisano nowe hasło', this.passwordChange.newPassword);
+        }
+    },
+    watch: {
+        profileChangeErrors: {
+            deep: true
+        },
+    },
+};
+</script>
+  
+<style></style>

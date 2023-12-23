@@ -18,9 +18,9 @@
                 <div>
                     <label for="email" class="block font-semibold">Email</label>
                     <input v-model="email" @input="validateEmail" type="email" id="email" name="email"
-                        class="w-full p-2 bg-bg border outline-none rounded-md focus:ring-1 " :class="{
+                        class="w-full p-2 bg-bg border rounded-md focus:ring-1 outline-none" :class="{
                             'border-accent text-accent focus:border-accent focus:ring-accent': emailError,
-                            ' border-white focus:border-primary-200  focus:ring-primary-200': !emailError
+                            'border-white focus:border-primary-200 focus:ring-primary-200': !emailError
                         }">
                     <p v-if="emailError" class="text-accent text-sm -mb-3 ">{{ emailError }}</p>
                 </div>
@@ -101,18 +101,17 @@ export default {
         },
 
         async register() {
-            this.$store.dispatch('setEmailError', '');
+            
             this.validatePassword();
-            if (!this.isPasswordValid) {
+            if (!this.isPasswordValid || this.emailError !='') {
                 return;
             }
-
             if (this.password !== this.repeatPassword && this.repeatPassword !== '') {
                 this.passwordMismatch = true;
                 return;
             }
             this.passwordMismatch = false;
-
+            this.$store.dispatch('setEmailError', '');
 
             const userData = {
                 email: this.email,
@@ -137,6 +136,6 @@ input:autofill {
 }
 
 input:autofill:focus {
-    box-shadow: inset 0 0 0 1000px theme('colors.bg.DEFAULT'), 0 0 0 1px theme('colors.primary.200') !important;
+    box-shadow: inset 0 0 0 1000px theme('colors.bg.DEFAULT'), 0 0 0 1px theme('colors.primary.200') !important ;
 }
 </style>
