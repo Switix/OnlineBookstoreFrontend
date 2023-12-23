@@ -5,6 +5,7 @@ import BookPage from '../views/BookPage.vue'
 import LoginPage from '../views/LoginPage.vue'
 import ProfilePage from '../views/ProfilePage.vue'
 import ProfileEditPage from '../views/ProfileEditPage.vue'
+import Store from '../store';
 const routes = [
   {
     path: '/',
@@ -30,18 +31,37 @@ const routes = [
   {
     path: '/profile',
     name: 'ProfilePage',
-    component: ProfilePage
+    component: ProfilePage,
+    meta: { requiresAuth: true }
   },
   {
     path: '/profile/edit',
     name: 'ProfileEditPage',
-    component: ProfileEditPage
+    component: ProfileEditPage,
+    meta: { requiresAuth: true }
   }
 ]
+
+
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes
 })
 
+// Route navigation guard
+router.beforeEach((to, from, next) => {
+  const isAuthenticated = Store.state.isLoggedIn ;
+
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    if (!isAuthenticated) {
+      console.log("niezalogowany");
+      next('/login');
+    } else {
+      next();
+    }
+  } else {
+    next(); // For routes that don't require authentication, proceed with navigation
+  }
+});
 export default router
