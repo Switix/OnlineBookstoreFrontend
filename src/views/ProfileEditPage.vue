@@ -31,7 +31,7 @@
                     </div>
                     <div>
                         <label for="newEmail" class="block font-semibold">Nowy adres e-mail</label>
-                        <input v-model="profileChange.newEmail" @input="validateEmail" type="email" id="newEmail"
+                        <input v-model="profileChange.email" @input="validateEmail" type="email" id="newEmail"
                             name="newEmail" class="w-full p-2 bg-bg border rounded-md focus:ring-1 outline-none" :class="{
                                 'border-accent text-accent focus:border-accent focus:ring-accent': profileChangeErrors.newEmailError,
                                 'border-white focus:border-primary-200  focus:ring-primary-200': !profileChangeErrors.newEmailError
@@ -41,7 +41,7 @@
                     </div>
                     <div>
                         <label for="password" class="block font-semibold">Aktualne hasło</label>
-                        <input v-model="profileChange.password" type="password" id="password" name="password"
+                        <input v-model="profileChange.password" @input="profileChangeErrors.passwordError=''" type="password" id="password" name="password"
                             class="w-full p-2 bg-bg border rounded-md focus:ring-1 outline-none" :class="{
                                 'border-accent text-accent focus:border-accent focus:ring-accent': profileChangeErrors.passwordError,
                                 'border-white focus:border-primary-200  focus:ring-primary-200': !profileChangeErrors.passwordError
@@ -100,9 +100,8 @@ export default {
             return {
                 name: this.user.name,
                 lastname: this.user.lastname,
-                email: this.user.email,
+                email: '',
                 password: '',
-                newEmail: '',
             };
         },
 
@@ -167,13 +166,24 @@ export default {
             }
             this.isPasswordValid = true;
         },
-        updateProfile() {
+        async updateProfile() {
             if (this.profileChangeErrors.lastnameError != '' || this.profileChangeErrors.nameError != ''
                 || this.profileChangeErrors.newEmailError != '' || this.profileChangeErrors.passwordError != '') {
                 return;
             }
-
-            console.log('Zapisano zmiany:', this.profileChange.name, this.user.name);
+            try {
+                await this.$store.dispatch('updateUserProfile', this.profileChange);
+            }
+            catch (error) {
+                if (error.response.status === 401) {
+                    await this.$store.dispatch('logout');
+                } else if (error.response.status === 403) {
+                    this.profileChangeErrors.passwordError="Podane hasło jest nieprawidłowe";
+                } else if (error.response.status === 500) {
+                    console.log(error);
+                }
+                return;
+            }
 
         },
         updatePassword() {
@@ -182,7 +192,10 @@ export default {
     },
     watch: {
         profileChangeErrors: {
-            deep: true
+            deep: true,
+            handler(){
+
+            }
         },
     },
 };

@@ -223,6 +223,24 @@ export default createStore({
         });
 
     },
+    async updateUserProfile({ commit }, profileChange){
+      await axios.patch('http://localhost:8080/api/user/profile', profileChange, { withCredentials: true })
+      .then((response) => {
+        const user = new User(
+          response.data.id,
+          response.data.name,
+          response.data.lastname,
+          response.data.email,
+          response.data.role
+        );
+        commit('SET_USER', user);
+        commit('SET_IS_LOGGED_IN', true);
+        router.push('/profile');
+      })
+      .catch((error) => {
+        throw error;
+      });
+    },
     async register({ commit }, userData) {
       await axios.post('http://localhost:8080/api/auth/register', userData, { withCredentials: true })
         .then((response) => {
