@@ -191,9 +191,12 @@ export default createStore({
     async logout({ commit }) {
 
       await axios.post('http://localhost:8080/api/auth/logout', {}, { withCredentials: true })
-        .then(() => {
+        .then(async () => {    
+          await router.push('/'); 
           commit('SET_USER', null);
           commit('SET_IS_LOGGED_IN', false);
+          
+          
         })
         .catch((error) => {
           console.log(error);
@@ -203,13 +206,14 @@ export default createStore({
       await axios.post('http://localhost:8080/api/auth/login', userData, {
         withCredentials: true
       })
-        .then(response => {
+        .then(response => {   
           const user = new User(
             response.data.id,
             response.data.name,
             response.data.lastname,
             response.data.email,
-            response.data.role
+            response.data.role,
+            response.data.billingAddress
           );
           commit('SET_USER', user);
           commit('SET_IS_LOGGED_IN', true);
@@ -231,10 +235,21 @@ export default createStore({
           response.data.name,
           response.data.lastname,
           response.data.email,
-          response.data.role
+          response.data.role,
+          response.data.billingAddress
         );
         commit('SET_USER', user);
         commit('SET_IS_LOGGED_IN', true);
+        router.push('/profile');
+      })
+      .catch((error) => {
+        throw error;
+      });
+    },
+    async updateUserPassword(_, passwordChange){
+      console.log(passwordChange);
+      await axios.patch('http://localhost:8080/api/user/changePassword', passwordChange, { withCredentials: true })
+      .then(() => {
         router.push('/profile');
       })
       .catch((error) => {

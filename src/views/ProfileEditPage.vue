@@ -41,11 +41,12 @@
                     </div>
                     <div>
                         <label for="password" class="block font-semibold">Aktualne hasło</label>
-                        <input v-model="profileChange.password" @input="profileChangeErrors.passwordError=''" type="password" id="password" name="password"
+                        <input v-model="profileChange.password" @input="profileChangeErrors.passwordError = ''"
+                            type="password" id="password" name="password"
                             class="w-full p-2 bg-bg border rounded-md focus:ring-1 outline-none" :class="{
                                 'border-accent text-accent focus:border-accent focus:ring-accent': profileChangeErrors.passwordError,
                                 'border-white focus:border-primary-200  focus:ring-primary-200': !profileChangeErrors.passwordError
-                            }">
+                            }" required>
                         <p v-if="profileChangeErrors.passwordError" class="text-accent text-sm -mb-3">{{
                             profileChangeErrors.passwordError }}</p>
                     </div>
@@ -65,18 +66,38 @@
                     <div>
                         <label for="password" class="block font-semibold">Aktualne hasło</label>
                         <input v-model="passwordChange.password" type="password" id="password" name="password"
-                            class="w-full p-2 bg-bg border ring-white text-text-200 rounded-md focus:border-primary-200 focus:ring-1 focus:ring-primary-200 outline-none">
+                            class="w-full p-2 bg-bg border rounded-md focus:ring-1 outline-none" :class="{
+                                'border-accent text-accent focus:border-accent focus:ring-accent': passwordChangeErrors.passwordError,
+                                'border-white focus:border-primary-200  focus:ring-primary-200': !passwordChangeErrors.passwordError
+                            }" required>
+                        <p v-if="passwordChangeErrors.passwordError" class="text-accent text-sm -mb-3">Podane hasło jest
+                            nieprawidłowe</p>
                     </div>
                     <div>
                         <label for="newPassword" class="block font-semibold">Nowe hasło</label>
-                        <input v-model="passwordChange.newPassword" type="password" id="newPassword" name="newPassword"
-                            class="w-full p-2 bg-bg border ring-white text-text-200 rounded-md focus:border-primary-200 focus:ring-1 focus:ring-primary-200 outline-none">
+                        <input v-model="passwordChange.newPassword" @focusout="validatePassword" type="password"
+                            id="newPassword" name="newPassword"
+                            class="w-full p-2 bg-bg border rounded-md focus:ring-1 outline-none" :class="{
+                                'border-accent text-accent focus:border-accent focus:ring-accent': (passwordChangeErrors.passwordMismatch || !passwordChangeErrors.isPasswordValid),
+                                'border-white focus:border-primary-200  focus:ring-primary-200': (!passwordChangeErrors.passwordMismatch && passwordChangeErrors.isPasswordValid)
+                            }" required>
+                        <p v-if="!passwordChangeErrors.isPasswordValid" class="text-accent text-sm -mb-1"> Twoje hasło musi
+                            zawierać co najmniej
+                            8
+                            znaków, w tym przynajmniej jedną cyfrę,
+                            jedną dużą i jedną małą literę oraz co najmniej jeden znak specjalny. Upewnij się, że hasło nie
+                            zawiera spacji.</p>
                     </div>
                     <div>
                         <label for="newPasswordRepeat" class="block font-semibold">Powtórz nowe hasło</label>
-                        <input v-model="passwordChange.newPasswordRepeat" type="password" id="newPasswordRepeat"
-                            name="newPasswordRepeat"
-                            class="w-full p-2 bg-bg border ring-white text-text-200 rounded-md focus:border-primary-200 focus:ring-1 focus:ring-primary-200 outline-none">
+                        <input v-model="passwordChange.newPasswordRepeat" @focusout="validatePassword" type="password"
+                            id="newPasswordRepeat" name="newPasswordRepeat"
+                            class="w-full p-2 bg-bg border rounded-md focus:ring-1 outline-none" :class="{
+                                'border-accent text-accent focus:border-accent focus:ring-accent': passwordChangeErrors.passwordMismatch,
+                                'border-white focus:border-primary-200 focus:ring-primary-200': !passwordChangeErrors.passwordMismatch
+                            }" required>
+                        <p v-if="passwordChangeErrors.passwordMismatch" class="text-accent text-sm -mb-1">Hasła nie są takie
+                            same.</p>
                     </div>
                     <div class="flex justify-end">
                         <button type="submit" class="px-4 py-2 bg-primary text-text rounded-md hover:bg-primary-200">
@@ -107,7 +128,6 @@ export default {
 
         passwordChange() {
             return {
-                email: this.user.email,
                 password: '',
                 newPassword: '',
                 newPasswordRepeat: '',
@@ -122,8 +142,12 @@ export default {
                 passwordError: '',
                 newEmailError: '',
             },
-            passwordMismatch: false,
-            isPasswordValid: true,
+            passwordChangeErrors: {
+                passwordError: false,
+                passwordMismatch: false,
+                isPasswordValid: true,
+            },
+
             validateEmailFn: _.debounce(function () {
                 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -160,11 +184,17 @@ export default {
             // Password requirements check
             const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+~\-=`{}[\]:;"'<>,.?\\/])(?=.*[^\s]).{8,}$/;
 
-            if (!passwordRegex.test(this.password) && this.password !== '') {
-                this.isPasswordValid = false;
+            if (!passwordRegex.test(this.passwordChange.newPassword) && this.passwordChange.newPassword !== '') {
+                this.passwordChangeErrors.isPasswordValid = false;
                 return;
             }
-            this.isPasswordValid = true;
+            this.passwordChangeErrors.isPasswordValid = true;
+
+            if (this.passwordChange.newPassword !== this.passwordChange.newPasswordRepeat && this.passwordChange.newPasswordRepeat !== '') {
+                this.passwordChangeErrors.passwordMismatch = true;
+                return;
+            }
+            this.passwordChangeErrors.passwordMismatch = false;
         },
         async updateProfile() {
             if (this.profileChangeErrors.lastnameError != '' || this.profileChangeErrors.nameError != ''
@@ -178,7 +208,7 @@ export default {
                 if (error.response.status === 401) {
                     await this.$store.dispatch('logout');
                 } else if (error.response.status === 403) {
-                    this.profileChangeErrors.passwordError="Podane hasło jest nieprawidłowe";
+                    this.profileChangeErrors.passwordError = "Podane hasło jest nieprawidłowe";
                 } else if (error.response.status === 500) {
                     console.log(error);
                 }
@@ -186,14 +216,40 @@ export default {
             }
 
         },
-        updatePassword() {
-            console.log('Zapisano nowe hasło', this.passwordChange.newPassword);
+        async updatePassword() {
+            this.passwordChangeErrors.passwordError=false;
+            if (this.passwordChangeErrors.passwordMismatch || !this.passwordChangeErrors.isPasswordValid) {
+                return;
+            }
+            try {
+                const passwordData = {
+                    password: this.passwordChange.password,
+                    newPassword: this.passwordChange.newPassword,
+                }
+                await this.$store.dispatch('updateUserPassword', passwordData);
+            }
+            catch (error) {
+                if (error.response.status === 401) {
+                    await this.$store.dispatch('logout');
+                } else if (error.response.status === 403) {
+                    this.passwordChangeErrors.passwordError = true;
+                } else if (error.response.status === 500) {
+                    console.log(error);
+                }
+                return;
+            }      
         }
     },
     watch: {
         profileChangeErrors: {
             deep: true,
-            handler(){
+            handler() {
+
+            }
+        },
+        passwordChangeErrors: {
+            deep: true,
+            handler() {
 
             }
         },
