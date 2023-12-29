@@ -19,6 +19,7 @@ export default createStore({
     user: null,
     loginError: '',
     emailError: '',
+    cities:[],
     //BookPage
     selectedBook: '',
     similarCategoryBooks: [],
@@ -61,6 +62,12 @@ export default createStore({
     },
     SET_EMAIL_ERROR(state, emailError) {
       state.emailError = emailError;
+    },
+    SET_USER_BILLING_ADDRESS(state, billingAddress){
+      state.user.billingAddress = billingAddress;
+    },
+    SET_CITIES(state, cities){
+      state.cities = cities;
     },
     //BookPage
     SET_SELECTED_BOOK(state, selectedBook) {
@@ -191,22 +198,20 @@ export default createStore({
     async logout({ commit }) {
 
       await axios.post('http://localhost:8080/api/auth/logout', {}, { withCredentials: true })
-        .then(async () => {    
-          await router.push('/'); 
+        .then(async () => {
+          await router.push('/');
           commit('SET_USER', null);
           commit('SET_IS_LOGGED_IN', false);
-          
-          
         })
         .catch((error) => {
-          console.log(error);
+          console.error(error);
         });
     },
     async login({ commit }, userData) {
       await axios.post('http://localhost:8080/api/auth/login', userData, {
         withCredentials: true
       })
-        .then(response => {   
+        .then(response => {
           const user = new User(
             response.data.id,
             response.data.name,
@@ -227,34 +232,44 @@ export default createStore({
         });
 
     },
-    async updateUserProfile({ commit }, profileChange){
+    async updateUserProfile({ commit }, profileChange) {
       await axios.patch('http://localhost:8080/api/user/profile', profileChange, { withCredentials: true })
-      .then((response) => {
-        const user = new User(
-          response.data.id,
-          response.data.name,
-          response.data.lastname,
-          response.data.email,
-          response.data.role,
-          response.data.billingAddress
-        );
-        commit('SET_USER', user);
-        commit('SET_IS_LOGGED_IN', true);
-        router.push('/profile');
-      })
-      .catch((error) => {
-        throw error;
-      });
+        .then((response) => {
+          const user = new User(
+            response.data.id,
+            response.data.name,
+            response.data.lastname,
+            response.data.email,
+            response.data.role,
+            response.data.billingAddress
+          );
+          commit('SET_USER', user);
+          commit('SET_IS_LOGGED_IN', true);
+          router.push('/profile');
+        })
+        .catch((error) => {
+          throw error;
+        });
     },
-    async updateUserPassword(_, passwordChange){
-      console.log(passwordChange);
+    async updateUserPassword(_, passwordChange) {
       await axios.patch('http://localhost:8080/api/user/changePassword', passwordChange, { withCredentials: true })
-      .then(() => {
-        router.push('/profile');
-      })
-      .catch((error) => {
-        throw error;
-      });
+        .then(() => {
+          router.push('/profile');
+        })
+        .catch((error) => {
+          throw error;
+        });
+    },
+    async updateBillingAddress({ commit }, billingAddressChange) {
+      await axios.patch('http://localhost:8080/api/user/billingAddressChange', billingAddressChange, { withCredentials: true })
+        .then((response) => {
+          commit('SET_USER_BILLING_ADDRESS',response.data)
+          commit('SET_IS_LOGGED_IN', true);
+          router.push('/profile');
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     },
     async register({ commit }, userData) {
       await axios.post('http://localhost:8080/api/auth/register', userData, { withCredentials: true })
@@ -264,7 +279,8 @@ export default createStore({
             response.data.name,
             response.data.lastname,
             response.data.email,
-            response.data.role
+            response.data.role,
+            response.data.billingAddress
           );
           commit('SET_USER', user);
           commit('SET_IS_LOGGED_IN', true);
@@ -275,6 +291,15 @@ export default createStore({
           if (error.response.status == 409) {
             commit('SET_EMAIL_ERROR', 'Ten Email jest już używany');
           }
+        });
+    },
+    async fetchCities({commit}){
+      await axios.get('http://localhost:8080/api/cities')
+        .then((response) => {
+          commit('SET_CITIES', response.data);
+        })
+        .catch((error) => {
+         console.error(error);
         });
     },
     setEmailError({ commit }, emailError) {

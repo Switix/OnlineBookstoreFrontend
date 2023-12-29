@@ -97,7 +97,7 @@
                     <p class="text-lg text-text-200">Brak adresów</p>
                 </div>
                 <div class="flex justify-end">
-                    <router-link :to="{ name: 'ProfileEditPage' }"
+                    <router-link :to="{ name: 'BillingAddressEditPage' }"
                         class="px-4 py-2 w-full text-center bg-primary text-text rounded-md hover:bg-primary-200">
                         <span class="text-md">{{ user.billingAddress ? 'Edytuj adres' : 'Dodaj adres' }}</span>
                     </router-link>

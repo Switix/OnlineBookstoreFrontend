@@ -5,6 +5,7 @@ import BookPage from '../views/BookPage.vue'
 import LoginPage from '../views/LoginPage.vue'
 import ProfilePage from '../views/ProfilePage.vue'
 import ProfileEditPage from '../views/ProfileEditPage.vue'
+import BillingAddressEditPage from '../views/BillingAddressEditPage.vue'
 import Store from '../store';
 const routes = [
   {
@@ -39,7 +40,13 @@ const routes = [
     name: 'ProfileEditPage',
     component: ProfileEditPage,
     meta: { requiresAuth: true }
-  }
+  },
+  {
+    path: '/profile/billingAddress',
+    name: 'BillingAddressEditPage',
+    component: BillingAddressEditPage,
+    meta: { requiresAuth: true }
+  },
 ]
 
 
