@@ -105,26 +105,62 @@
             </div>
             <div class="space-y-4 bg-bg-200 rounded-lg mx-4 shadow-md p-6  ">
                 <p class="text-2xl font-bold  ">Adres dostawy</p>
-                <div v-if="shipingAddres" class="flex items-end bg-bg/30 rounded p-2">
-                    <!-- Ikona osoby -->
-                    <div class="mr-4  text-accent focus:outline-none">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                            stroke="currentColor" class="w-6 h-6">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-                        </svg>
-                    </div>
-                    <div>
-                        <p class="text-xl">{{ user.name }} {{ user.lastname }}</p>
-                    </div>
-                </div>
-                <div v-else class="bg-bg/30 rounded p-2">
+                <div v-if="user.shippingAddresses.length == 0" class="bg-bg/30 rounded p-2">
                     <p class="text-lg text-text-200">Brak adresów</p>
                 </div>
+
+                <div v-else v-for="address in user.shippingAddresses" :key="address.id"
+                    class="bg-bg/30 flex flex-col items-start space-y-4 rounded p-2">
+
+                    <div class="flex items-center">
+                        <!-- Ikona dla Nazwy -->
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="w-6 h-6 mr-4 text-accent focus:outline-none">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+                        </svg>
+                        <span class="text-lg ">{{ address.name }}</span>
+                    </div>
+                    <div class="flex items-center">
+                        <!-- Ikona domu -->
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="w-6 h-6 mr-4 text-accent focus:outline-none">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+                        </svg>
+
+                        <span class="text-lg ">{{ address.street }} {{
+                            address.buildingNumber }}
+                            <span v-if="address.apartmentNumber">/ {{
+                                address.apartmentNumber }}</span>
+                        </span>
+                    </div>
+                    <div class="flex items-center">
+                        <!-- Ikona biurowca -->
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="w-6 h-6 mr-4 text-accent focus:outline-none">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21" />
+                        </svg>
+                        <span class="text-lg">{{ address.zipCode }} {{
+                            address.city.cityName }}</span>
+                    </div>
+                    <div class="flex space-x-4 w-full">
+                        <router-link :to="{ name: 'ShippingAddressEditPage', params: { id: address.id } }"
+                            class="px-4 py-2 w-1/2 text-center bg-accent-200 text-text rounded-md hover:bg-primary-200">
+                            <span class="text-md">Usuń adres </span>
+                        </router-link>
+                        <router-link :to="{ name: 'ShippingAddressEditPage', params: { id: address.id } }"
+                            class="px-4 py-2 w-1/2 text-center bg-primary text-text rounded-md hover:bg-primary-200">
+                            <span class="text-md">Edytuj adres </span>
+                        </router-link>
+                    </div>
+                </div>
+
                 <div class="flex justify-end">
-                    <router-link :to="{ name: 'ProfileEditPage' }"
+                    <router-link :to="{ name: 'ShippingAddressEditPage', params: { id: null } }"
                         class="px-4 py-2 w-full text-center bg-primary text-text rounded-md hover:bg-primary-200">
-                        <span class="text-md">{{ shipingAddres ? 'Edytuj adres' : 'Dodaj adres' }}</span>
+                        <span class="text-md">Dodaj adres</span>
                     </router-link>
                 </div>
             </div>
@@ -140,11 +176,6 @@ export default {
             return this.$store.state.user;
         }
     },
-    data() {
-        return {
-            shipingAddres: false,
-        };
-    }
 };
 </script>
   

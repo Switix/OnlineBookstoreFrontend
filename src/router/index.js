@@ -6,6 +6,7 @@ import LoginPage from '../views/LoginPage.vue'
 import ProfilePage from '../views/ProfilePage.vue'
 import ProfileEditPage from '../views/ProfileEditPage.vue'
 import BillingAddressEditPage from '../views/BillingAddressEditPage.vue'
+import ShippingAddressEditPage from '../views/ShippingAddressEditPage.vue'
 import Store from '../store';
 const routes = [
   {
@@ -45,6 +46,12 @@ const routes = [
     path: '/profile/billingAddress',
     name: 'BillingAddressEditPage',
     component: BillingAddressEditPage,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/profile/shippingAddress/:id?',
+    name: 'ShippingAddressEditPage',
+    component: ShippingAddressEditPage,
     meta: { requiresAuth: true }
   },
 ]

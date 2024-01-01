@@ -150,11 +150,11 @@ export default {
 
             validateEmailFn: _.debounce(function () {
                 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-                if (this.profileChange.newEmail === '') {
+                console.log(this.profileChange.email);
+                if (this.profileChange.email === '') {
                     this.profileChangeErrors.newEmailError = '';
                 }
-                else if (!emailPattern.test(this.profileChange.newEmail)) {
+                else if (!emailPattern.test(this.profileChange.email)) {
                     this.profileChangeErrors.newEmailError = 'Wprowadź poprawny adres email.';
                 }
                 else {

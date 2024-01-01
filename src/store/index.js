@@ -5,6 +5,7 @@ import Author from '../components/model/Author';
 import User from '../components/model/User';
 import router from '../router';
 
+
 export default createStore({
   state: {
     books: [],
@@ -19,7 +20,7 @@ export default createStore({
     user: null,
     loginError: '',
     emailError: '',
-    cities:[],
+    cities: [],
     //BookPage
     selectedBook: '',
     similarCategoryBooks: [],
@@ -63,10 +64,16 @@ export default createStore({
     SET_EMAIL_ERROR(state, emailError) {
       state.emailError = emailError;
     },
-    SET_USER_BILLING_ADDRESS(state, billingAddress){
+    SET_USER_BILLING_ADDRESS(state, billingAddress) {
       state.user.billingAddress = billingAddress;
     },
-    SET_CITIES(state, cities){
+    ADD_SHIPPING_ADDRESS(state, newAddress) {
+      state.user.shippingAddresses.push(newAddress);
+    },
+    UPDATE_SHIPPING_ADDRESS(state, { index, newAddress }) {
+      state.user.shippingAddresses.splice(index, 1, newAddress);
+    },
+    SET_CITIES(state, cities) {
       state.cities = cities;
     },
     //BookPage
@@ -218,7 +225,8 @@ export default createStore({
             response.data.lastname,
             response.data.email,
             response.data.role,
-            response.data.billingAddress
+            response.data.billingAddress,
+            response.data.shippingAddresses
           );
           commit('SET_USER', user);
           commit('SET_IS_LOGGED_IN', true);
@@ -241,7 +249,8 @@ export default createStore({
             response.data.lastname,
             response.data.email,
             response.data.role,
-            response.data.billingAddress
+            response.data.billingAddress,
+            response.data.shippingAddresses
           );
           commit('SET_USER', user);
           commit('SET_IS_LOGGED_IN', true);
@@ -263,7 +272,31 @@ export default createStore({
     async updateBillingAddress({ commit }, billingAddressChange) {
       await axios.patch('http://localhost:8080/api/user/billingAddressChange', billingAddressChange, { withCredentials: true })
         .then((response) => {
-          commit('SET_USER_BILLING_ADDRESS',response.data)
+          commit('SET_USER_BILLING_ADDRESS', response.data)
+          commit('SET_IS_LOGGED_IN', true);
+          router.push('/profile');
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
+    async updateShippingAddress({ commit, state }, shippingAddressChange) {
+      await axios.patch('http://localhost:8080/api/user/shippingAddressChange', shippingAddressChange, { withCredentials: true })
+        .then((response) => {
+          const AddressIndex = state.user.shippingAddresses.findIndex(address => address.id === response.data.id);
+          commit('UPDATE_SHIPPING_ADDRESS', { index: AddressIndex, newAddress: response.data });
+          commit('SET_IS_LOGGED_IN', true);
+
+          router.push('/profile');
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
+    async createShippingAddress({ commit }, shippingAddress) {
+      await axios.post('http://localhost:8080/api/user/shippingAddress', shippingAddress, { withCredentials: true })
+        .then(async (response) => {
+          commit('ADD_SHIPPING_ADDRESS', response.data);
           commit('SET_IS_LOGGED_IN', true);
           router.push('/profile');
         })
@@ -280,7 +313,8 @@ export default createStore({
             response.data.lastname,
             response.data.email,
             response.data.role,
-            response.data.billingAddress
+            response.data.billingAddress,
+            response.data.shippingAddresses
           );
           commit('SET_USER', user);
           commit('SET_IS_LOGGED_IN', true);
@@ -293,13 +327,13 @@ export default createStore({
           }
         });
     },
-    async fetchCities({commit}){
+    async fetchCities({ commit }) {
       await axios.get('http://localhost:8080/api/cities')
         .then((response) => {
           commit('SET_CITIES', response.data);
         })
         .catch((error) => {
-         console.error(error);
+          console.error(error);
         });
     },
     setEmailError({ commit }, emailError) {

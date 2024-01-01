@@ -2,7 +2,7 @@
     <div class="flex items-center justify-center py-4 bg-bg">
         <div class="max-w-md w-full space-y-4  flex flex-col">
             <div class="space-y-4 bg-bg-200 rounded-lg mx-4 shadow-md p-6 ">
-                <h2 class="text-2xl font-bold text-center mb-4">Edycja Adresu rozliczeniowego</h2>
+                <h2 class="text-2xl font-bold text-center mb-4">Edycja adresu rozliczeniowego</h2>
                 <form @submit.prevent="updateBillingAddress" class="space-y-4">
                     <div>
                         <label for="phoneNumber" class="block font-semibold">Telefon Kontaktowy</label>
@@ -51,7 +51,7 @@
                                     <div v-for="city in filteredCities" :key="city.id" @click="selectCity(city)"
                                         class="p-2 hover:bg-gray-100 cursor-pointer">{{ city.cityName }}</div>
                                 </div>
-                                <p v-show="cityError" class="text-accent text-sm mb-1 absolute left-0 px-2 z-10">Wybierz miasto z listy</p>                    
+                                <p v-show="cityError" class="text-accent text-sm mb-1 absolute left-0 px-2">Wybierz miasto z listy</p>                    
                         </div>
                     </div>
                     <div>
