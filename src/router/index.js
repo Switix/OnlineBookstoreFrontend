@@ -7,17 +7,19 @@ import ProfilePage from '../views/ProfilePage.vue'
 import ProfileEditPage from '../views/ProfileEditPage.vue'
 import BillingAddressEditPage from '../views/BillingAddressEditPage.vue'
 import ShippingAddressEditPage from '../views/ShippingAddressEditPage.vue'
+import ShoppingCartPage from '../views/ShoppingCartPage.vue'
+
 import Store from '../store';
 const routes = [
   {
     path: '/',
-    name: 'home',
+    name: 'catalogPage',
     component: CatalogPage,
  
   },
   {
     path: '/register',
-    name: 'register',
+    name: 'registerPage',
     component: RegisterPage
   },
   {
@@ -52,6 +54,12 @@ const routes = [
     path: '/profile/shippingAddress/:id?',
     name: 'ShippingAddressEditPage',
     component: ShippingAddressEditPage,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/shoppingCart',
+    name: 'ShoppingCartPage',
+    component: ShoppingCartPage,
     meta: { requiresAuth: true }
   },
 ]

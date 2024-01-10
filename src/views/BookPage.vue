@@ -5,7 +5,6 @@
             <!-- Zdjęcie książki -->
             <img class="w-52 rounded-lg shadow mx-auto my-4 cursor-pointer" :src="selectedBook.img"
                 :alt="selectedBook.title" @click="toggleImageExpansion" />
-
             <!-- Powiększony obrazek -->
             <div v-if="isExpanded" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75"
                 @click="toggleImageExpansion">
@@ -22,7 +21,7 @@
             <p class="text-lg text-text mb-2">Rok wydania: {{ selectedBook.publicationYear }}</p>
 
             <div class="mt-4 flex items-center justify-between">
-                <p class="text-xl text-primary-300">{{ selectedBook.price }} zł</p>
+                <p class="text-xl text-primary-300">{{ selectedBook.price.toFixed(2) }} zł</p>
                 <button @click="addToCart"
                     class="px-4 py-2 bg-gradient-to-r from-[#3A7BD5] from-70% to-[#4e88d9] text-text rounded-md">
                     Dodaj do koszyka
@@ -31,12 +30,12 @@
         </div>
         <!-- Cart Modal -->
         <div v-if="showConfirmation" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
-            @click="closeConfirmation('close')">
+            @click="closeCartModal">
             <div class="bg-bg p-2 mx-4 rounded-md shadow-md relative w-full" @click.stop>
                 <div class="m-2 flex flex-row items-center justify-between w-full">
                     <p class="text-md">Produkt został dodany do koszyka!</p>
                     <!-- Ikona X w prawym górnym rogu -->
-                    <button @click="closeConfirmation('close')" class="mr-4 bg-bg-200 rounded-full">
+                    <button @click="closeCartModal" class="mr-4 bg-accent/10  rounded-full">
                         <svg class="w-5 h-5 text-accent cursor-pointer m-1" fill="none" stroke="currentColor"
                             viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
@@ -60,12 +59,12 @@
                     <!-- Przyciski -->
                     <div class="flex flex-col mt-4 md:flex-row items-center md:justify-between w-full">
                         <!-- Przejdź do koszyka -->
-                        <button @click="closeConfirmation('goToCart')"
-                            class="px-4 py-2 bg-gradient-to-r from-[#3A7BD5] from-70% to-[#4e88d9] text-text text-lg w-full rounded-md mb-2 md:mb-0">
+                        <router-link :to="{ name: 'ShoppingCartPage' }"  class="px-4 py-2 bg-gradient-to-r from-[#3A7BD5] from-70% to-[#4e88d9] text-text text-center text-lg w-full rounded-md mb-2 md:mb-0">
                             Przejdź do koszyka
-                        </button>
+                        </router-link>
+                 
                         <!-- Kontynuuj zakupy -->
-                        <button @click="closeConfirmation('close')"
+                        <button @click="closeCartModal"
                             class="px-4 py-2 border border-[#3f434c] text-text text-lg w-full rounded-md">
                             Kontynuuj zakupy
                         </button>
@@ -206,16 +205,16 @@ export default {
         toggleImageExpansion() {
             this.isExpanded = !this.isExpanded;
         },
-        addToCart() {
+        async addToCart() {
+            const cartItem ={
+                bookId: this.selectedBook.id,
+                quantity: 1
+            }
+            await this.$store.dispatch('addCartItem',cartItem);
             this.showConfirmation = true;
         },
-        closeConfirmation(action) {
-            if (action === 'close') {
-                this.showConfirmation = false;
-            }
-            if (action === 'goToCart') {
-                // Przekierowanie do koszyka
-            }
+        closeCartModal() {        
+                this.showConfirmation = false;   
         },
         scrollToTop() {
             window.scrollTo({ top: 0, behavior: 'smooth' });
