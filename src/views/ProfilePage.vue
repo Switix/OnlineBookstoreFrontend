@@ -146,10 +146,10 @@
                             address.city.cityName }}</span>
                     </div>
                     <div class="flex space-x-4 w-full">
-                        <router-link :to="{ name: 'ShippingAddressEditPage', params: { id: address.id } }"
+                        <button @click="deleteShippingAddress(address.id)"
                             class="px-4 py-2 w-1/2 text-center bg-accent-200 text-text rounded-md hover:bg-primary-200">
                             <span class="text-md">Usuń adres </span>
-                        </router-link>
+                        </button>
                         <router-link :to="{ name: 'ShippingAddressEditPage', params: { id: address.id } }"
                             class="px-4 py-2 w-1/2 text-center bg-primary text-text rounded-md hover:bg-primary-200">
                             <span class="text-md">Edytuj adres </span>
@@ -173,8 +173,14 @@
 export default {
     computed: {
         user() {
-            return this.$store.state.user;
+            
+            return this.$store.state.user.user;
         }
+    },
+    methods:{
+        async deleteShippingAddress(shippingAddressId) {         
+           await this.$store.dispatch('user/deleteShippingAddress', shippingAddressId);
+        },
     },
 };
 </script>

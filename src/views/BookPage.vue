@@ -178,7 +178,7 @@ export default {
             immediate: true,
             handler(newId, oldId) {
                 if (newId !== oldId) {
-                    this.$store.dispatch('fetchBookAndSimilar', newId);
+                    this.$store.dispatch('book/fetchBookAndSimilar', newId);
                 }
             },
         },
@@ -192,13 +192,13 @@ export default {
     },
     computed: {
         selectedBook() {
-            return this.$store.state.selectedBook;
+            return this.$store.state.book.selectedBook;
         },
         similarCategoryBooks() {
-            return this.$store.getters.similarCategoryBooks;
+            return this.$store.getters['book/similarCategoryBooks'];
         },
         similarAuthorBooks() {
-            return this.$store.getters.similarAuthorBooks;
+            return this.$store.getters['book/similarAuthorBooks'];
         }
     },
     methods: {
@@ -210,7 +210,7 @@ export default {
                 bookId: this.selectedBook.id,
                 quantity: 1
             }
-            await this.$store.dispatch('addCartItem',cartItem);
+            await this.$store.dispatch('shoppingCart/addCartItem',cartItem);
             this.showConfirmation = true;
         },
         closeCartModal() {        

@@ -77,16 +77,16 @@ export default {
         };
     },
     mounted() {
-        this.$store.dispatch('setEmailError', '');
+        this.$store.dispatch('user/setEmailError', '');
     },
     computed: {
         emailError() {
-            return this.$store.state.emailError;
+            return this.$store.state.user.emailError;
         }
     },
     methods: {
         validateEmail() {
-            this.$store.dispatch('setEmailError', '');
+            this.$store.dispatch('user/setEmailError', '');
             this.validateEmailFn();
         },
         validatePassword() {
@@ -111,7 +111,7 @@ export default {
                 return;
             }
             this.passwordMismatch = false;
-            this.$store.dispatch('setEmailError', '');
+            this.$store.dispatch('user/setEmailError', '');
 
             const userData = {
                 email: this.email,
@@ -119,7 +119,7 @@ export default {
                 lastname: this.lastname,
                 password: this.password
             };
-            await this.$store.dispatch('register', userData);
+            await this.$store.dispatch('user/register', userData);
         }
     }
 };

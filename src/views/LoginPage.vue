@@ -46,19 +46,19 @@ export default {
   },
   computed: {
     loginError() {
-      return this.$store.state.loginError;
+      return this.$store.state.user.loginError;
     }
   },
   methods: {
     async login() {
-      this.$store.dispatch('clearLoginError');
+      this.$store.dispatch('user/clearLoginError');
       this.loggingIn = true;
       this.logginButtonTitle = 'Logowanie'
       const userData = {
         email: this.email,
         password: this.password
       };
-      await this.$store.dispatch('login', userData);
+      await this.$store.dispatch('user/login', userData);
      
       if (!this.loginError) {
         this.$router.push('/');

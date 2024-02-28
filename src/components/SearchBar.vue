@@ -35,22 +35,22 @@ export default {
     },
     computed: {
         suggestedAuthors() {
-            return this.$store.state.suggestedAuthors;
+            return this.$store.state.book.suggestedAuthors;
         },
         suggestedCategories() {
-            return this.$store.state.suggestedCategories;
+            return this.$store.state.book.suggestedCategories;
         },
         showSuggestions() {
-            return this.$store.state.showSuggestions;
+            return this.$store.state.book.showSuggestions;
         }
     },
     methods: {
         debouncedUpdateSearch: _.debounce(function () {
-            this.$store.dispatch('suggestionSearch', this.searchQuery);
+            this.$store.dispatch('book/suggestionSearch', this.searchQuery);
         }, 300),
 
         selectSuggestion(selected) {
-            this.$store.dispatch('fetchSelectedSuggestion', selected);
+            this.$store.dispatch('book/fetchSelectedSuggestion', selected);
         }
     }
 };

@@ -115,7 +115,7 @@ import _ from 'lodash';
 export default {
     computed: {
         user() {
-            return this.$store.state.user;
+            return this.$store.state.user.user;
         },
         profileChange() {
             return {
@@ -202,11 +202,11 @@ export default {
                 return;
             }
             try {
-                await this.$store.dispatch('updateUserProfile', this.profileChange);
+                await this.$store.dispatch('user/updateUserProfile', this.profileChange);
             }
             catch (error) {
                 if (error.response.status === 401) {
-                    await this.$store.dispatch('logout');
+                    await this.$store.dispatch('user/logout');
                 } else if (error.response.status === 403) {
                     this.profileChangeErrors.passwordError = "Podane hasło jest nieprawidłowe";
                 } else if (error.response.status === 500) {
@@ -226,11 +226,11 @@ export default {
                     password: this.passwordChange.password,
                     newPassword: this.passwordChange.newPassword,
                 }
-                await this.$store.dispatch('updateUserPassword', passwordData);
+                await this.$store.dispatch('user/updateUserPassword', passwordData);
             }
             catch (error) {
                 if (error.response.status === 401) {
-                    await this.$store.dispatch('logout');
+                    await this.$store.dispatch('user/logout');
                 } else if (error.response.status === 403) {
                     this.passwordChangeErrors.passwordError = true;
                 } else if (error.response.status === 500) {

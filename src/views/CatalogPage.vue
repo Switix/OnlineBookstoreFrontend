@@ -40,15 +40,15 @@ import BookFilterPanel from '@/components/BookFilterPanel';
 
 export default {
   created() {
-    this.$store.dispatch('fetchBooks');
+    this.$store.dispatch('book/fetchBooks');
   },
 
   computed: {
     books() {
-      return this.$store.state.books;
+      return this.$store.state.book.books;
     },
     catalogTitle() {
-      return this.$store.state.catalogTitle;
+      return this.$store.state.book.catalogTitle;
     },
   },
   components: {

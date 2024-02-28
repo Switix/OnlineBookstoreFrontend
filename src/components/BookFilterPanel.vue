@@ -15,9 +15,9 @@
                 <ul>
                     <li v-for="category in categories" :key="category.id">
                         <button @click="selectCategory(category)"
-                            class="w-full text-sm text-left text-text-200 text-sm focus:outline-none flex justify-between hover:text-primary-200 focus:text-primary-200">
+                            class="w-full text-sm text-left text-text-200 focus:outline-none flex justify-between hover:text-primary-200 focus:text-primary-200">
                             <span class="truncate">{{ category.name }}</span>
-                            <span class="ml-auto ml-5">{{ category.count }}</span>
+                            <span class="ml-auto">{{ category.count }}</span>
                         </button>
                     </li>
                 </ul>
@@ -33,9 +33,9 @@
                 <ul>
                     <li v-for="author in authors" :key="author.id">
                         <button @click="selectAuthor(author)"
-                            class="w-full text-sm text-left text-text-200 text-sm focus:outline-none flex justify-between hover:text-primary-200">
+                            class="w-full text-sm text-left text-text-200 focus:outline-none flex justify-between hover:text-primary-200">
                             <span class="truncate">{{ author.name }}</span>
-                            <span class="ml-auto ml-5">{{ author.count }}</span>
+                            <span class="ml-auto">{{ author.count }}</span>
                         </button>
                     </li>
                 </ul>
@@ -59,10 +59,10 @@ export default {
     },
     computed: {
         categories() {
-            return this.$store.state.categories;
+            return this.$store.state.book.categories;
         },
         authors() {
-            return this.$store.state.authors;
+            return this.$store.state.book.authors;
         },
     },
 
@@ -77,16 +77,16 @@ export default {
             this.showAuthorSection = !this.showAuthorSection;
         },
         async selectCategory(category) {
-            this.$store.dispatch('fetchBooksByCategory', category);
+            this.$store.dispatch('book/fetchBooksByCategory', category);
         },
         async selectAuthor(author) {
-            this.$store.dispatch('fetchBooksByAuthor', author);
+            this.$store.dispatch('book/fetchBooksByAuthor', author);
         },
         async fetchCategories() {
-            this.$store.dispatch('fetchCategories');
+            this.$store.dispatch('book/fetchCategories');
         },
         async fetchAuthors() {
-            this.$store.dispatch('fetchAuthors');
+            this.$store.dispatch('book/fetchAuthors');
         }
     },
 };

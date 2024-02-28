@@ -81,7 +81,7 @@ import SearchBar from '@/components/SearchBar';
 export default {
   computed: {
     isLoggedIn() {
-      return this.$store.state.isLoggedIn;
+      return this.$store.state.user.isLoggedIn;
     }
   },
   data() {
@@ -91,13 +91,13 @@ export default {
   },
   methods: {
     fetchBooks() {
-      this.$store.dispatch('fetchBooks');
+      this.$store.dispatch('book/fetchBooks');
     },
     toggleUserPanel() {
       this.showUserPanel = !this.showUserPanel;
     },
     logout() {
-      this.$store.dispatch('logout');
+      this.$store.dispatch('user/logout');
 
     }
   },

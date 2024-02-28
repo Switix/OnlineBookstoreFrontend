@@ -104,33 +104,33 @@ export default {
     computed: {
         cartItems() {
 
-            return this.$store.state.cartItems;
+            return this.$store.state.shoppingCart.cartItems;
         },
         cartTotal() {
-            return Number(this.$store.state.cartTotal).toFixed(2);
+            return Number(this.$store.state.shoppingCart.cartTotal).toFixed(2);
         }
     },
     created() {
-        this.$store.dispatch('fetchCartItems');
+        this.$store.dispatch('shoppingCart/fetchCartItems');
 
     },
     methods: {
         async removeCartItem(id) {
-            await this.$store.dispatch('removeCartItem', id);
-            this.$store.dispatch('fetchCartItems');
+            await this.$store.dispatch('shoppingCart/removeCartItem', id);
+            this.$store.dispatch('shoppingCart/fetchCartItems');
         },
         async increaseQuantity(cartItem) {
             cartItem.quantity++;
-            await this.$store.dispatch('updateCartItem', cartItem);
-            this.$store.dispatch('fetchCartItems');
+            await this.$store.dispatch('shoppingCart/updateCartItem', cartItem);
+            this.$store.dispatch('shoppingCart/fetchCartItems');
         },
         async decreaseQuantity(cartItem) {
             if (cartItem.quantity === 1) {
                 return;
             }
             cartItem.quantity--;
-            await this.$store.dispatch('updateCartItem', cartItem);
-            this.$store.dispatch('fetchCartItems');
+            await this.$store.dispatch('shoppingCart/updateCartItem', cartItem);
+            this.$store.dispatch('shoppingCart/fetchCartItems');
         },
     }
 }

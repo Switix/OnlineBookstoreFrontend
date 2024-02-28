@@ -73,7 +73,7 @@ const router = createRouter({
 
 // Route navigation guard
 router.beforeEach((to, from, next) => {
-  const isAuthenticated = Store.state.isLoggedIn ;
+  const isAuthenticated = Store.state.user.isLoggedIn ;
 
   if (to.matched.some(record => record.meta.requiresAuth)) {
     if (!isAuthenticated) {
