@@ -196,9 +196,9 @@ export default {
     getters: {
         similarCategoryBooks(state) {
             return state.similarCategoryBooks.filter(book => book.title != state.selectedBook.title);
-          },
-          similarAuthorBooks(state) {
+        },
+        similarAuthorBooks(state) {
             return state.similarAuthorBooks.filter(book => book.title != state.selectedBook.title);
-          }
+        }
     }
 };

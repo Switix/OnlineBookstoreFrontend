@@ -8,7 +8,7 @@
                 <div :class="{ 'border-b-2 border-bg pb-4 ': index !== cartItems.length - 1 }"
                     class="flex items-center w-full max-h-36 ">
                     <div class="mr-4 flex items-center justify-center w-3/12 ">
-                        <router-link :to="{ name: 'BookPage', params: { id: cartItem.book.id } }" >
+                        <router-link :to="{ name: 'BookPage', params: { id: cartItem.book.id } }">
                             <img :src="cartItem.book.img" alt="Book Cover" class=" max-h-28 w-full max-w-24">
                         </router-link>
                     </div>
@@ -35,10 +35,12 @@
                         </button>
                         <!--cart item quantity-->
                         <div class="flex w-11/12 h-1/4">
-                            <button @click="decreaseQuantity(cartItem)" class="w-1/4 max-w-5 h-full  bg-primary rounded-l-md">-</button>
+                            <button @click="decreaseQuantity(cartItem)"
+                                class="w-1/4 max-w-5 h-full  bg-primary rounded-l-md">-</button>
                             <span class=" w-1/2 h-full max-w-10  text-center bg-bg/60 flex items-center justify-center">{{
                                 cartItem.quantity }}</span>
-                            <button @click="increaseQuantity(cartItem)" class="w-1/4 max-w-5 h-full bg-primary rounded-r-md">+</button>
+                            <button @click="increaseQuantity(cartItem)"
+                                class="w-1/4 max-w-5 h-full bg-primary rounded-r-md">+</button>
                         </div>
                     </div>
                 </div>
@@ -46,27 +48,14 @@
         </div>
 
         <!--summary-->
-        <div class=" bg-bg-200 w-full rounded-lg shadow-md p-6">
-            <div class="flex flex-col space-y-4 border-bg pb-2 ">
-                <p class="text-xl font-bold">Podsumowanie</p>
-                <hr>
-                <div class="flex justify-between text-lg ">
-                    <p>Wartość produktów: </p>
-                    <span class="text-primary-200 font-bold"> {{ cartTotal }} zł</span>
-                </div>
-                <hr>
-                <div class="flex justify-between text-lg ">
-                    <p>Do zapłaty: </p>
-                    <span class="text-primary-200 font-bold"> {{ cartTotal }} zł</span>
-                </div>
+        <ShoppingCartSummary >
+            <router-link :to="{ name: 'OrderCreatePage' }"
+                class="px-4 py-2  text-center bg-primary text-text rounded-md hover:bg-primary-200">
+                <span class="text-md">Przejdź do kasy</span>
+            </router-link>
+        </ShoppingCartSummary>
 
-                <router-link :to="{ name: 'ShippingAddressEditPage' }"
-                    class="px-4 py-2  text-center bg-primary text-text rounded-md hover:bg-primary-200">
-                    <span class="text-md">Przejdź do kasy</span>
-                </router-link>
-            </div>
 
-        </div>
     </div>
     <!--Empty shoping cart-->
     <div v-else class="flex flex-col justify-center w-full p-4 bg-bg space-y-4">
@@ -100,7 +89,11 @@
 </template>
   
 <script>
+import ShoppingCartSummary from '@/components/ShoppingCartSummary'
 export default {
+    components: {
+        ShoppingCartSummary
+    },
     computed: {
         cartItems() {
 

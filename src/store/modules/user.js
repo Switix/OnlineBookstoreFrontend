@@ -112,7 +112,26 @@ export default {
         .then((response) => {
           commit('SET_USER_BILLING_ADDRESS', response.data)
           commit('SET_IS_LOGGED_IN', true);
-          router.push('/profile');
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
+    async createBillingAddress({ commit }, billingAddressChange) {
+      await axios.post('http://localhost:8080/api/billingAddress', billingAddressChange, { withCredentials: true })
+        .then((response) => {
+          commit('SET_USER_BILLING_ADDRESS', response.data)
+          commit('SET_IS_LOGGED_IN', true);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
+    async deleteBillingAddress({ commit }, billingAddressId) {
+      await axios.delete('http://localhost:8080/api/billingAddress/' + billingAddressId, { withCredentials: true })
+        .then(async () => {
+          commit('SET_USER_BILLING_ADDRESS', null);
+          commit('SET_IS_LOGGED_IN', true);
         })
         .catch((error) => {
           console.error(error);
@@ -124,19 +143,17 @@ export default {
           const AddressIndex = state.user.shippingAddresses.findIndex(address => address.id === response.data.id);
           commit('UPDATE_SHIPPING_ADDRESS', { index: AddressIndex, newAddress: response.data });
           commit('SET_IS_LOGGED_IN', true);
-
-          router.push('/profile');
         })
         .catch((error) => {
           console.error(error);
         });
     },
+
     async createShippingAddress({ commit }, shippingAddress) {
       await axios.post('http://localhost:8080/api/shippingAddress', shippingAddress, { withCredentials: true })
         .then(async (response) => {
           commit('ADD_SHIPPING_ADDRESS', response.data);
           commit('SET_IS_LOGGED_IN', true);
-          router.push('/profile');
         })
         .catch((error) => {
           console.error(error);
@@ -147,7 +164,6 @@ export default {
         .then(async () => {
           commit('REMOVE_SHIPPING_ADDRESS', shippingAddressId);
           commit('SET_IS_LOGGED_IN', true);
-          router.push('/profile');
         })
         .catch((error) => {
           console.error(error);

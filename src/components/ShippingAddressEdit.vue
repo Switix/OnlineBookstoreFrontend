@@ -67,7 +67,14 @@
 </template>
 <script>
 //import _ from 'lodash';
+import router from '@/router';
 export default {
+    props: {
+        redirect: {
+            type: Boolean,
+            default: true
+        }
+    },
     computed: {
         user() {
             return this.$store.state.user.user;
@@ -135,6 +142,9 @@ export default {
             }
             else{
                 await this.$store.dispatch('user/updateShippingAddress', this.shippingAddressChange);
+            }
+            if(this.redirect){
+                router.go(-1);
             }
         },
         selectCity(city) {

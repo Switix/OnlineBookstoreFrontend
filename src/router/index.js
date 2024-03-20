@@ -8,6 +8,11 @@ import ProfileEditPage from '../views/ProfileEditPage.vue'
 import BillingAddressEditPage from '../views/BillingAddressEditPage.vue'
 import ShippingAddressEditPage from '../views/ShippingAddressEditPage.vue'
 import ShoppingCartPage from '../views/ShoppingCartPage.vue'
+import OrderCreatePage from '../views/OrderCreatePage.vue'
+import ShipmentPage from '../views/ShipmentPage.vue'
+import OrderPage from '../views/OrderPage.vue'
+import OrderDetailsPage from '../views/OrderDetailsPage.vue'
+
 
 import Store from '../store';
 const routes = [
@@ -60,6 +65,30 @@ const routes = [
     path: '/shoppingCart',
     name: 'ShoppingCartPage',
     component: ShoppingCartPage,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/orders/create',
+    name: 'OrderCreatePage',
+    component: OrderCreatePage,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/orders/shipment',
+    name: 'ShipmentPage',
+    component: ShipmentPage,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/orders',
+    name: 'OrderPage',
+    component: OrderPage,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/orders/:id',
+    name: 'OrderDetailsPage',
+    component: OrderDetailsPage,
     meta: { requiresAuth: true }
   },
 ]

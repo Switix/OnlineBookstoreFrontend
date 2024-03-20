@@ -55,7 +55,7 @@
               konto</router-link>
           </li>
           <li>
-            <router-link @click="toggleUserPanel" to="/"
+            <router-link @click="toggleUserPanel" to="/orders"
               class="block py-2 px-4 text-text hover:text-primary-200">Zamówienia</router-link>
           </li>
           <li>

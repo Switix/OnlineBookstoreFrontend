@@ -6,6 +6,7 @@ import axios from 'axios'
 import user from './modules/user';
 import shoppingCart from './modules/shoppingCart';
 import book from './modules/book';
+import order from './modules/order';
 
 
 
@@ -37,7 +38,8 @@ export default createStore({
   modules: {
     user,
     book,
-    shoppingCart
+    shoppingCart,
+    order
   },
 
 })
