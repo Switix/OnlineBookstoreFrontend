@@ -12,6 +12,7 @@ import OrderCreatePage from '../views/OrderCreatePage.vue'
 import ShipmentPage from '../views/ShipmentPage.vue'
 import OrderPage from '../views/OrderPage.vue'
 import OrderDetailsPage from '../views/OrderDetailsPage.vue'
+import ManageOrdersPage from '../views/ManageOrdersPage.vue'
 
 
 import Store from '../store';
@@ -91,6 +92,12 @@ const routes = [
     component: OrderDetailsPage,
     meta: { requiresAuth: true }
   },
+  {
+    path: '/manageOrders',
+    name: 'ManageOrdersPage',
+    component: ManageOrdersPage,
+    meta: { requiresAuth: true, requiresAdmin: true } 
+  }
 ]
 
 
@@ -103,12 +110,18 @@ const router = createRouter({
 // Route navigation guard
 router.beforeEach((to, from, next) => {
   const isAuthenticated = Store.state.user.isLoggedIn ;
-
+  const isAdmin = Store.state.user.isAdmin; 
+  
   if (to.matched.some(record => record.meta.requiresAuth)) {
     if (!isAuthenticated) {
       next('/login');
     } else {
-      next();
+      if (to.matched.some(record => record.meta.requiresAdmin) && !isAdmin) {
+        // If the route requires admin role and the user is not admin, redirect to login
+        next('/login');
+      } else {
+        next();
+      }
     }
   } else {
     next(); // For routes that don't require authentication, proceed with navigation

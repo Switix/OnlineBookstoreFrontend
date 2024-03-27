@@ -7,6 +7,7 @@ export default {
   namespaced: true,
   state: {
     isLoggedIn: false,
+    isAdmin:false,
     user: null,
     loginError: '',
     emailError: '',
@@ -15,6 +16,9 @@ export default {
   mutations: {
     SET_IS_LOGGED_IN(state, isLoggedIn) {
       state.isLoggedIn = isLoggedIn;
+    },
+    SET_IS_ADMIN(state, isAdmin){
+      state.isAdmin = isAdmin;
     },
     SET_USER(state, user) {
       state.user = user;
@@ -47,6 +51,7 @@ export default {
           await router.push('/');
           commit('SET_USER', null);
           commit('SET_IS_LOGGED_IN', false);
+          commit('SET_IS_ADMIN', false);
         })
         .catch((error) => {
           console.error(error);
@@ -68,6 +73,7 @@ export default {
           );
           commit('SET_USER', user);
           commit('SET_IS_LOGGED_IN', true);
+          commit('SET_IS_ADMIN', user.role=="ROLE_ADMIN");
           commit('SET_LOGIN_ERROR', '');
         })
         .catch(() => {
@@ -92,6 +98,7 @@ export default {
           );
           commit('SET_USER', user);
           commit('SET_IS_LOGGED_IN', true);
+          commit('SET_IS_ADMIN', user.role=="ROLE_ADMIN");
           router.push('/profile');
         })
         .catch((error) => {
@@ -183,6 +190,7 @@ export default {
           );
           commit('SET_USER', user);
           commit('SET_IS_LOGGED_IN', true);
+          commit('SET_IS_ADMIN', user.role=="ROLE_ADMIN");
           commit('SET_EMAIL_ERROR', '');
           router.push('/');
         })

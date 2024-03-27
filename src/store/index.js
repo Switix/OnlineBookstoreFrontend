@@ -7,6 +7,7 @@ import user from './modules/user';
 import shoppingCart from './modules/shoppingCart';
 import book from './modules/book';
 import order from './modules/order';
+import admin from './modules/admin';
 
 
 
@@ -39,7 +40,8 @@ export default createStore({
     user,
     book,
     shoppingCart,
-    order
+    order,
+    admin
   },
 
 })
