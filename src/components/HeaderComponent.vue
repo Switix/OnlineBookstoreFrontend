@@ -66,6 +66,10 @@
             <router-link @click="toggleUserPanel" :to="{ name: 'ManageOrdersPage'}"
               class="block py-2 px-4 text-text hover:text-primary-200">Zarządzaj zamówieniami</router-link>
           </li>
+          <li v-if="isLoggedIn && isAdmin">
+            <router-link @click="toggleUserPanel" :to="{ name: 'AdminPanelPage'}"
+              class="block py-2 px-4 text-text hover:text-primary-200">Panel Administratora</router-link>
+          </li>
           <li>
             <button v-if="isLoggedIn" @click="logout"
               class="w-full bg-accent-200 text-text py-2 px-4 mt-2 hover:bg-accent-300">

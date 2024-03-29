@@ -13,6 +13,8 @@ import ShipmentPage from '../views/ShipmentPage.vue'
 import OrderPage from '../views/OrderPage.vue'
 import OrderDetailsPage from '../views/OrderDetailsPage.vue'
 import ManageOrdersPage from '../views/ManageOrdersPage.vue'
+import ManageAuthorsPage from '../views/ManageAuthorsPage.vue'
+import AdminPanelPage from '../views/AdminPanelPage.vue'
 
 
 import Store from '../store';
@@ -93,9 +95,21 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
-    path: '/manageOrders',
+    path: '/adminPanel/manageOrders',
     name: 'ManageOrdersPage',
     component: ManageOrdersPage,
+    meta: { requiresAuth: true, requiresAdmin: true } 
+  },
+  {
+    path: '/adminPanel/manageAuthors',
+    name: 'ManageAuthorsPage',
+    component: ManageAuthorsPage,
+    meta: { requiresAuth: true, requiresAdmin: true } 
+  },
+  {
+    path: '/adminPanel',
+    name: 'AdminPanelPage',
+    component: AdminPanelPage,
     meta: { requiresAuth: true, requiresAdmin: true } 
   }
 ]

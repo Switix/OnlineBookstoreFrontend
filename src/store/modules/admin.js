@@ -1,15 +1,22 @@
 import axios from 'axios';
+import Author from '@/components/model/Author';
 import { convertToOrder } from '@/utils/orderUtils';
 
 export default {
     namespaced: true,
     state: {
+        //order manage
         orders: [],
         searchedOrder: '',
-        searchedOrderError: ''
+        searchedOrderError: '',
+
+        //author manage
+        suggestedAuthors: [],
+
 
     },
     mutations: {
+        //order manage
         SET_ORDERS(state, orders) {
             state.orders = orders;
         },
@@ -24,6 +31,20 @@ export default {
             if (state.searchedOrder && state.searchedOrder.id === orderId) {
                 state.searchedOrder = null;
             }
+        },
+
+        //author manage
+        SET_SUGGESTED_AUTHORS(state, authors) {
+            state.suggestedAuthors = authors;
+        },
+        CLEAR_AUTHOR_SEARCH(state) {
+            state.suggestedAuthors = [];
+        },
+        REMOVE_AUTHOR(state, authorId) {
+            state.suggestedAuthors = state.suggestedAuthors.filter(author => author.id !== authorId);
+        },
+        ADD_AUTHOR(state, author) {
+            state.suggestedAuthors.push(author);
         },
 
     },
@@ -66,8 +87,8 @@ export default {
         async removeOrder({ commit }, orderId) {
             try {
                 await axios.delete('http://localhost:8080/api/orders/admin/' + orderId, { withCredentials: true });
-                commit('REMOVE_ORDER',orderId);
-                
+                commit('REMOVE_ORDER', orderId);
+
             } catch (error) {
                 console.error('Błąd podczas pobierania danych:', error);
             }
@@ -75,6 +96,62 @@ export default {
         setSearchedOrderError({ commit }, searchedOrderError) {
             commit('SET_SEARCHED_ORDER_ERROR', searchedOrderError);
         },
+
+        //author manage
+        async searchAuthorByName({ commit }, authorName) {
+            try {
+                const response = await axios.get('http://localhost:8080/api/search/authors', {
+                    params: { q: authorName },
+                    withCredentials: true
+                });
+                commit('SET_SUGGESTED_AUTHORS', response.data.map(authorData => {
+                    return new Author(authorData.id, authorData.name);
+                }));
+
+            } catch (error) {
+                console.error('Błąd podczas pobierania danych:', error);
+            }
+
+        },
+        async updateAuthor(_, updateData) {
+            try {
+                await axios.patch('http://localhost:8080/api/authors/admin', updateData, { withCredentials: true });
+
+            } catch (error) {
+
+                console.error('Błąd podczas pobierania danych:', error);
+            }
+        },
+        async removeAuthor({ commit }, authorId) {
+            try {
+                await axios.delete('http://localhost:8080/api/authors/admin/' + authorId, { withCredentials: true });
+                commit('REMOVE_AUTHOR', authorId);
+
+            } catch (error) {
+                console.error('Błąd podczas pobierania danych:', error);
+            }
+        },
+        async addAuthor({ commit }, authorData) {
+            try {
+                const response = await axios.post('http://localhost:8080/api/authors/admin', authorData, { withCredentials: true });
+
+                const location = response.headers.location;
+                axios.get(location, { withCredentials: true })
+                    .then(response => {
+                        // Handle the successful response, commit the author data to the state
+                        commit('ADD_AUTHOR', new Author(response.data.id, response.data.name));
+                    })
+                    .catch(error => {
+                        console.error('Błąd podczas pobierania danych:', error);
+                    });
+            } catch (error) {
+                console.error('Błąd podczas pobierania danych:', error);
+            }
+        },
+        clearAuthorSearch({ commit }) {
+            commit('CLEAR_AUTHOR_SEARCH');
+
+        }
 
     },
 
