@@ -16,8 +16,8 @@
                 </div>
                 <div class="w-full flex space-x-4">
                     <div class="flex text-lg justify-center items-center aspect-square w-1/2 text-center  bg-bg-200 shadow-md">
-                        <router-link :to="{ name: 'ManageOrdersPage' }">
-                            Zarządzaj kategoriamii
+                        <router-link :to="{ name: 'ManageCategoriesPage' }">
+                            Zarządzaj kategoriami
                         </router-link>
                     </div>
                     <div class="flex text-lg justify-center items-center aspect-square w-1/2 text-center  bg-bg-200 shadow-md">

@@ -1,6 +1,7 @@
 import axios from 'axios';
 import Author from '@/components/model/Author';
 import { convertToOrder } from '@/utils/orderUtils';
+import Category from '@/components/model/Category';
 
 export default {
     namespaced: true,
@@ -12,6 +13,9 @@ export default {
 
         //author manage
         suggestedAuthors: [],
+
+        //category manage
+        suggestedCategories: [],
 
 
     },
@@ -45,6 +49,20 @@ export default {
         },
         ADD_AUTHOR(state, author) {
             state.suggestedAuthors.push(author);
+        },
+
+         //category manage
+         SET_SUGGESTED_CATEGORIES(state, categories) {
+            state.suggestedCategories = categories;
+        },
+        CLEAR_CATEGORY_SEARCH(state) {
+            state.suggestedCategories = [];
+        },
+        REMOVE_CATEGORY(state, categoryId) {
+            state.suggestedCategories = state.suggestedCategories.filter(category => category.id !== categoryId);
+        },
+        ADD_CATEGORY(state, category) {
+            state.suggestedCategories.push(category);
         },
 
     },
@@ -150,6 +168,62 @@ export default {
         },
         clearAuthorSearch({ commit }) {
             commit('CLEAR_AUTHOR_SEARCH');
+
+        },
+
+        //category manage
+        async searchCategoryByName({ commit }, categoryName) {
+            try {
+                const response = await axios.get('http://localhost:8080/api/search/categories', {
+                    params: { q: categoryName },
+                    withCredentials: true
+                });
+                commit('SET_SUGGESTED_CATEGORIES', response.data.map(categoryData => {
+                    return new Category(categoryData.id, categoryData.name);
+                }));
+
+            } catch (error) {
+                console.error('Błąd podczas pobierania danych:', error);
+            }
+
+        },
+        async updateCategory(_, updateData) {
+            try {
+                await axios.patch('http://localhost:8080/api/categories/admin', updateData, { withCredentials: true });
+
+            } catch (error) {
+
+                console.error('Błąd podczas pobierania danych:', error);
+            }
+        },
+        async removeCategory({ commit }, categoryId) {
+            try {
+                await axios.delete('http://localhost:8080/api/categories/admin/' + categoryId, { withCredentials: true });
+                commit('REMOVE_CATEGORY', categoryId);
+
+            } catch (error) {
+                console.error('Błąd podczas pobierania danych:', error);
+            }
+        },
+        async addCategory({ commit }, categoryData) {
+            try {
+                const response = await axios.post('http://localhost:8080/api/categories/admin', categoryData, { withCredentials: true });
+
+                const location = response.headers.location;
+                axios.get(location, { withCredentials: true })
+                    .then(response => {
+                        // Handle the successful response, commit the category data to the state
+                        commit('ADD_CATEGORY', new Category(response.data.id, response.data.name));
+                    })
+                    .catch(error => {
+                        console.error('Błąd podczas pobierania danych:', error);
+                    });
+            } catch (error) {
+                console.error('Błąd podczas pobierania danych:', error);
+            }
+        },
+        clearCategorySearch({ commit }) {
+            commit('CLEAR_CATEGORY_SEARCH');
 
         }
 
