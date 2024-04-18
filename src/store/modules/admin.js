@@ -1,6 +1,7 @@
 import axios from 'axios';
 import Author from '@/components/model/Author';
 import { convertToOrder } from '@/utils/orderUtils';
+import { fetchAndSetBookImage } from '@/utils/bookUtils';
 import Category from '@/components/model/Category';
 
 export default {
@@ -16,6 +17,11 @@ export default {
 
         //category manage
         suggestedCategories: [],
+
+        //book manage
+        suggestedBooks: [],
+        bookToEdit: {},
+        saveStatus: ''
 
 
     },
@@ -51,8 +57,8 @@ export default {
             state.suggestedAuthors.push(author);
         },
 
-         //category manage
-         SET_SUGGESTED_CATEGORIES(state, categories) {
+        //category manage
+        SET_SUGGESTED_CATEGORIES(state, categories) {
             state.suggestedCategories = categories;
         },
         CLEAR_CATEGORY_SEARCH(state) {
@@ -64,6 +70,26 @@ export default {
         ADD_CATEGORY(state, category) {
             state.suggestedCategories.push(category);
         },
+
+        //books manage
+        SET_SUGGESTED_BOOKS(state, books) {
+            state.suggestedBooks = books;
+        },
+        CLEAR_BOOK_SEARCH(state) {
+            state.suggestedBooks = [];
+        },
+        REMOVE_BOOK(state, bookId) {
+            state.suggestedBooks = state.suggestedBooks.filter(book => book.id !== bookId);
+        },
+        ADD_BOOK(state, book) {
+            state.suggestedBooks.push(book);
+        },
+        SET_BOOK_TO_EDIT(state, bookToEdit) {
+            state.bookToEdit = bookToEdit;
+        },
+        SET_SAVE_STATUS(state, saveStatus) {
+            state.saveStatus = saveStatus;
+        }
 
     },
     actions: {
@@ -224,6 +250,78 @@ export default {
         },
         clearCategorySearch({ commit }) {
             commit('CLEAR_CATEGORY_SEARCH');
+
+        },
+
+
+        //book manage
+        async searchBookByTitle({ commit }, bookName) {
+            try {
+                const response = await axios.get('http://localhost:8080/api/search/books', {
+                    params: { q: bookName },
+                    withCredentials: true
+                });
+                const books = response.data;
+                for (const book of books) {
+                    await fetchAndSetBookImage(book);
+                }
+
+                commit('SET_SUGGESTED_BOOKS', books);
+
+            } catch (error) {
+                console.error('Błąd podczas pobierania danych:', error);
+            }
+
+        },
+        async updateBook({commit}, updateData) {
+            try {
+                await axios.patch('http://localhost:8080/api/books/admin', updateData, { withCredentials: true });
+
+                commit('SET_SAVE_STATUS', "Pomyślnie zapisano");
+            } catch (error) {
+
+                console.error('Błąd podczas pobierania danych:', error);
+            }
+        },
+        async removeBook({ commit }, bookId) {
+            try {
+                await axios.delete('http://localhost:8080/api/books/admin/' + bookId, { withCredentials: true });
+                commit('REMOVE_BOOK', bookId);
+
+            } catch (error) {
+                console.error('Błąd podczas pobierania danych:', error);
+            }
+        },
+        async saveBook({commit}, bookData) {
+            try {
+                await axios.post('http://localhost:8080/api/books/admin', bookData, { withCredentials: true });
+
+                commit('SET_SAVE_STATUS', "Pomyślnie zapisano");
+            } catch (error) {
+                console.error('Błąd podczas pobierania danych:', error);
+            }
+        },
+        async uploadBookImage(_, data) {
+            const uploadData = new FormData();
+            uploadData.append('file', data.newImage);
+            try {
+                const response = await axios.post('http://localhost:8080/api/images/upload', uploadData, { withCredentials: true });
+                data.book.imageUrl = response.data
+
+            } catch (error) {
+
+                console.error('Błąd podczas pobierania danych:', error);
+            }
+        },
+
+        setBookToEdit({ commit }, bookToEdit) {
+            commit('SET_BOOK_TO_EDIT', bookToEdit);
+        },
+        setSaveStatus({ commit }, saveStatus) {
+            commit('SET_SAVE_STATUS', saveStatus);
+        },
+        clearBookSearch({ commit }) {
+            commit('CLEAR_BOOK_SEARCH');
 
         }
 

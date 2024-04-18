@@ -15,6 +15,8 @@ import OrderDetailsPage from '../views/OrderDetailsPage.vue'
 import ManageOrdersPage from '../views/ManageOrdersPage.vue'
 import ManageAuthorsPage from '../views/ManageAuthorsPage.vue'
 import ManageCategoriesPage from '../views/ManageCategoriesPage.vue'
+import ManageBooksPage from '../views/ManageBooksPage.vue'
+import EditBookPage from '../views/EditBookPage.vue'
 import AdminPanelPage from '../views/AdminPanelPage.vue'
 
 
@@ -111,6 +113,18 @@ const routes = [
     path: '/adminPanel/manageCategories',
     name: 'ManageCategoriesPage',
     component: ManageCategoriesPage,
+    meta: { requiresAuth: true, requiresAdmin: true } 
+  },
+  {
+    path: '/adminPanel/manageBooks',
+    name: 'ManageBooksPage',
+    component: ManageBooksPage,
+    meta: { requiresAuth: true, requiresAdmin: true } 
+  },
+  {
+    path: '/adminPanel/manageBooks/editBook',
+    name: 'EditBookPage',
+    component: EditBookPage,
     meta: { requiresAuth: true, requiresAdmin: true } 
   },
   {

@@ -4,7 +4,7 @@
             <div class="flex flex-wrap space-y-4 ">
                 <div class="w-full flex space-x-4">
                     <div class="flex text-lg justify-center items-center aspect-square w-1/2 text-center  bg-bg-200 shadow-md">
-                        <router-link :to="{ name: 'ManageOrdersPage' }">
+                        <router-link :to="{ name: 'ManageBooksPage' }">
                             Zarządzaj książkami
                         </router-link>
                     </div>

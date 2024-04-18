@@ -50,21 +50,13 @@
           </RouterLink>
         </div>
         <ul class="text-md text-center">
-          <li>
-            <router-link @click="toggleUserPanel" to="/" class="block py-2 px-4 text-text hover:text-primary-200">Twoje
-              konto</router-link>
-          </li>
-          <li>
+          <li v-if="!isAdmin">
             <router-link @click="toggleUserPanel" to="/orders"
               class="block py-2 px-4 text-text hover:text-primary-200">Zamówienia</router-link>
           </li>
-          <li>
-            <router-link @click="toggleUserPanel" to="/profile"
+          <li v-if="! isAdmin">
+            <router-link @click="toggleUserPanel " to="/profile"
               class="block py-2 px-4 text-text hover:text-primary-200">Twoje dane</router-link>
-          </li>
-          <li v-if="isLoggedIn && isAdmin">
-            <router-link @click="toggleUserPanel" :to="{ name: 'ManageOrdersPage'}"
-              class="block py-2 px-4 text-text hover:text-primary-200">Zarządzaj zamówieniami</router-link>
           </li>
           <li v-if="isLoggedIn && isAdmin">
             <router-link @click="toggleUserPanel" :to="{ name: 'AdminPanelPage'}"
