@@ -13,6 +13,7 @@ import admin from './modules/admin';
 
 export default createStore({
   state: {
+    phoneWidth:640,
     cities: [],
   },
   mutations: {

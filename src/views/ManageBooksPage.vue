@@ -3,7 +3,7 @@
         <div class="max-w-md w-full space-y-4  flex flex-col">
             <div class=" bg-bg-200 rounded-lg shadow-md p-6">
                 <button @click="editBook({})"
-                    class=" w-full inline-flex justify-center rounded-md  shadow-sm px-4 py-2 bg-primary text-base font-medium   sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                    class=" w-full inline-flex justify-center rounded-md  shadow-sm px-4 py-2 bg-primary text-base font-medium   ">
                     Dodaj nową książkę
                 </button>
             </div>

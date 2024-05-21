@@ -1,24 +1,26 @@
 <template>
-  <div class="sticky top-0 w-full z-50">
-    <div class="bg-[#202c44] w-full  h-20 flex items-center justify-between shadow-md p-4">
+  <div class="sticky top-0 w-full z-50 bg-[#202c44] ">
+    <div class=" mx-auto container  h-20  p-4 ">
+      <div class=" mx-auto  flex items-center justify-around">
       <!-- Logo -->
       <router-link to="/" @click="fetchBooks">
         <img class="mx-auto" src="/images/logo-icon.png" alt="logo" />
       </router-link>
 
 
-      <SearchBar class="grow " />
+      <SearchBar />
 
-      <!-- Ikona osoby -->
-      <div class="mr-2 mt-2">
-        <button @click="toggleUserPanel" class="text-accent focus:outline-none">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-            stroke="currentColor" class="w-6 h-6">
-            <path stroke-linecap="round" stroke-linejoin="round"
-              d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-          </svg>
-        </button>
-      </div>
+      <div class="flex space-x-0">
+    <!-- Ikona osoby -->
+    <div class="mr-2 mt-2">
+      <button @click="toggleUserPanel" ref="userIconButton" class="text-accent focus:outline-none">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+          stroke="currentColor" class="w-6 h-6">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+        </svg>
+      </button>
+    </div>
 
 
       <!-- Ikona koszyka -->
@@ -34,43 +36,45 @@
         </div>
       </router-link>
     </div>
+    </div>
+  </div>
 
 
-    <!-- Panel użytkownika -->
-    <transition name="slide-down">
-      <div v-if="showUserPanel" class="fixed top-20 right-0 bg-bg-300 shadow-md p-4 w-48 overflow-hidden">
-        <div v-if="!isLoggedIn">
-          <RouterLink :to="'/login'">
-            <button @click="toggleUserPanel"
-              class="w-full bg-primary py-2 text-center hover:bg-primary-200">Zaloguj</button>
-          </RouterLink>
-          <RouterLink :to="'/register'">
-            <button @click="toggleUserPanel"
-              class="w-full bg-accent-200 py-2 text-center my-2 hover:bg-accent">Zarejestruj</button>
-          </RouterLink>
-        </div>
-        <ul class="text-md text-center">
-          <li v-if="!isAdmin">
-            <router-link @click="toggleUserPanel" to="/orders"
-              class="block py-2 px-4 text-text hover:text-primary-200">Zamówienia</router-link>
-          </li>
-          <li v-if="! isAdmin">
-            <router-link @click="toggleUserPanel " to="/profile"
-              class="block py-2 px-4 text-text hover:text-primary-200">Twoje dane</router-link>
-          </li>
-          <li v-if="isLoggedIn && isAdmin">
-            <router-link @click="toggleUserPanel" :to="{ name: 'AdminPanelPage'}"
-              class="block py-2 px-4 text-text hover:text-primary-200">Panel Administratora</router-link>
-          </li>
-          <li>
-            <button v-if="isLoggedIn" @click="logout"
-              class="w-full bg-accent-200 text-text py-2 px-4 mt-2 hover:bg-accent-300">
-              Wyloguj się
-            </button>
-          </li>
-        </ul>
+   <!-- Panel użytkownika -->
+  <transition name="slide-down">
+    <div v-if="showUserPanel" :style="{ right: userPanelRight }" class="fixed top-20 bg-bg-300 shadow-md p-4 w-48 overflow-hidden">
+      <div v-if="!isLoggedIn">
+        <RouterLink :to="'/login'">
+          <button @click="toggleUserPanel"
+            class="w-full bg-primary py-2 text-center hover:bg-primary-200">Zaloguj</button>
+        </RouterLink>
+        <RouterLink :to="'/register'">
+          <button @click="toggleUserPanel"
+            class="w-full bg-accent-200 py-2 text-center my-2 hover:bg-accent">Zarejestruj</button>
+        </RouterLink>
       </div>
-    </transition>
+      <ul class="text-md text-center">
+        <li v-if="!isAdmin">
+          <router-link @click="toggleUserPanel" to="/orders"
+            class="block py-2 px-4 text-text hover:text-primary-200">Zamówienia</router-link>
+        </li>
+        <li v-if="!isAdmin">
+          <router-link @click="toggleUserPanel " to="/profile"
+            class="block py-2 px-4 text-text hover:text-primary-200">Twoje dane</router-link>
+        </li>
+        <li v-if="isLoggedIn && isAdmin">
+          <router-link @click="toggleUserPanel" :to="{ name: 'AdminPanelPage'}"
+            class="block py-2 px-4 text-text hover:text-primary-200">Panel Administratora</router-link>
+        </li>
+        <li>
+          <button v-if="isLoggedIn" @click="logout"
+            class="w-full bg-accent-200 text-text py-2 px-4 mt-2 hover:bg-accent-300">
+            Wyloguj się
+          </button>
+        </li>
+      </ul>
+    </div>
+  </transition>
 
   </div>
 </template>
@@ -89,7 +93,8 @@ export default {
   },
   data() {
     return {
-      showUserPanel: false
+      showUserPanel: false,
+      userPanelRight: '0px',
     };
   },
   methods: {
@@ -98,11 +103,40 @@ export default {
     },
     toggleUserPanel() {
       this.showUserPanel = !this.showUserPanel;
+      if (this.showUserPanel) {
+        this.setUserPanelPosition();
+      }
+    },
+    setUserPanelPosition() {
+      this.$nextTick(() => {
+        const userIconButton = this.$refs.userIconButton;
+        if (userIconButton) {
+          const rect = userIconButton.getBoundingClientRect();
+          
+          if(window.innerWidth - rect.right -96 +12 < 0){
+            this.userPanelRight=`0px`;
+            return;
+          }
+
+          this.userPanelRight = `${window.innerWidth - rect.right -96 +12}px`;
+        }
+      });
+    },
+    updatePanelPositionOnResize() {
+      if (this.showUserPanel) {
+        this.setUserPanelPosition();
+      }
     },
     logout() {
       this.$store.dispatch('user/logout');
 
     }
+  },
+  mounted() {
+    window.addEventListener('resize', this.updatePanelPositionOnResize);
+  },
+  beforeUnmount() {
+    window.removeEventListener('resize', this.updatePanelPositionOnResize);
   },
   components: {
     SearchBar,
@@ -121,11 +155,11 @@ export default {
 }
 
 .slide-down-enter-to {
-  height: 200px;
+  height: 150px;
 }
 
 .slide-down-leave-from {
-  height: 200px;
+  height: 150px;
 }
 
 .slide-down-leave-to {

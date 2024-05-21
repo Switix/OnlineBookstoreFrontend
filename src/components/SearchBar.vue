@@ -1,5 +1,5 @@
 <template>
-    <div class="mx-6 search-bar relative  sm:w-1/2 lg:w-1/3">
+    <div class="mx-6 w-1/2 relative max-w-[32rem]">
 
         <input v-model="searchQuery" @input="debouncedUpdateSearch" type="text" placeholder="Szukaj książki..."
             class="p-2 border border-[#75aaff] focus:outline-none rounded w-full bg-bg" />

@@ -1,5 +1,5 @@
 <template>
-    <div v-if="selectedBook" class="flex flex-col items-center justify-center p-4">
+    <div v-if="selectedBook && !isOverPhoneWidth" class="flex flex-col items-center justify-center p-4">
         <div class="border border-[#8f001a] bg-bg-200 w-full rounded-lg p-2 ">
 
             <!-- Zdjęcie książki -->
@@ -23,55 +23,13 @@
             <div class="mt-4 flex items-center justify-between">
                 <p class="text-xl text-primary-300">{{ selectedBook.price.toFixed(2) }} zł</p>
                 <button @click="addToCart"
-                    class="px-4 py-2 bg-gradient-to-r from-[#3A7BD5] from-70% to-[#4e88d9] text-text rounded-md">
+                    class="px-4 py-2 bg-gradient-to-r from-[#3A7BD5] from-70% to-[#4e88d9] text-text rounded-md"
+                    :disabled="selectedBook.inventory.quantity < 1">
                     Dodaj do koszyka
                 </button>
             </div>
         </div>
-        <!-- Cart Modal -->
-        <div v-if="showConfirmation" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
-            @click="closeCartModal">
-            <div class="bg-bg p-2 mx-4 rounded-md shadow-md relative w-full" @click.stop>
-                <div class="m-2 flex flex-row items-center justify-between w-full">
-                    <p class="text-md">Produkt został dodany do koszyka!</p>
-                    <!-- Ikona X w prawym górnym rogu -->
-                    <button @click="closeCartModal" class="mr-4 bg-accent/10  rounded-full">
-                        <svg class="w-5 h-5 text-accent cursor-pointer m-1" fill="none" stroke="currentColor"
-                            viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
-                            </path>
-                        </svg>
-                    </button>
-                </div>
-                    <hr class="border-[#8f001a]">
-                <div class="mt-4 mx-2 flex flex-col md:flex-row items-center md:items-start md:justify-between">
-                    <!-- Obrazek, tytuł, autorzy i cena -->
-                    <div class="flex w-full items-center ">
-                        <!-- Obrazek książki -->
-                        <img class="w-32  rounded-md mr-6" :src="selectedBook.img" :alt="selectedBook.title" />
-                        <!-- Tytuł, autorzy i cena -->
-                        <div>
-                            <p class="text-xl">{{ selectedBook.title }}</p>
-                            <p class="text-text-200 text-md">{{ selectedBook.bookAuthors.map(author => author.name).join(', ') }}</p>
-                            <p class="text-primary-200 font-semibold text-lg">{{ selectedBook.price }} zł</p>
-                        </div>
-                    </div>
-                    <!-- Przyciski -->
-                    <div class="flex flex-col mt-4 md:flex-row items-center md:justify-between w-full">
-                        <!-- Przejdź do koszyka -->
-                        <router-link :to="{ name: 'ShoppingCartPage' }"  class="px-4 py-2 bg-gradient-to-r from-[#3A7BD5] from-70% to-[#4e88d9] text-text text-center text-lg w-full rounded-md mb-2 md:mb-0">
-                            Przejdź do koszyka
-                        </router-link>
-                 
-                        <!-- Kontynuuj zakupy -->
-                        <button @click="closeCartModal"
-                            class="px-4 py-2 border border-[#3f434c] text-text text-lg w-full rounded-md">
-                            Kontynuuj zakupy
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
+
         <!-- Opis ksiązki-->
         <div class="mt-4 p-4 w-full bg-bg-200 rounded-lg shadow">
             <p class="text-lg font-semibold text-text mb-2">Opis:</p>
@@ -88,7 +46,7 @@
                 <li class="flex mb-2">
                     <span class="w-24 inline-block">Autor: </span>
                     <span class="flex-1 ml-4">{{ selectedBook.bookAuthors.map(author => author.name).join(', ')
-                    }}</span>
+                        }}</span>
                 </li>
                 <li class="flex mb-2">
                     <span class="w-24 inline-block">Kategoria: </span>
@@ -169,8 +127,204 @@
             </div>
         </div>
     </div>
+    <div v-if="selectedBook && isOverPhoneWidth" class=" p-4 w-full flex flex-col justify-center items-center  ">
+        <div class=" w-3/5 max-w-5xl">
+            <div class="flex items-start justify-center gap-4 max-h-[46rem]  ">
+                <div class="border border-[#8f001a] bg-bg-200   rounded-lg p-4 w-1/3  ">
+
+                    <!-- Zdjęcie książki -->
+                    <img class=" rounded-lg shadow mx-auto  cursor-pointer " :src="selectedBook.img"
+                        :alt="selectedBook.title" @click="toggleImageExpansion" />
+                    <!-- Powiększony obrazek -->
+                    <div v-if="isExpanded"
+                        class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75"
+                        @click="toggleImageExpansion">
+                        <div class="absolute top-4 right-4">
+                            <button @click="toggleImageExpansion" @click.stop
+                                class="text-text text-2xl">&times;</button>
+                        </div>
+                        <img :src="selectedBook.img" :alt="selectedBook.title" class="max-w-full max-h-full" />
+                    </div>
+                </div>
+
+                <!-- Informacje o książce -->
+                <div class=" p-4 bg-bg-200  rounded-lg shadow w-2/5">
+                    <h1 class="text-2xl font-bold mb-2">{{ selectedBook.title }}</h1>
+                    <p class="text-lg text-text mb-2">{{ selectedBook.bookAuthors.map(author => author.name).join(', ')
+                        }}
+                    </p>
+                    <p class="text-lg text-text mb-2">Rok wydania: {{ selectedBook.publicationYear }}</p>
+                    <span class="text-base text-text line-clamp-5">{{ selectedBook.description }} </span>
+                    <div class="flex flex-row justify-end w-full ">
+                        <a @click.prevent="scrollToDescription"
+                            class="  cursor-pointer text-primary-200 underline">czytaj
+                            więcej</a>
+                    </div>
+                    <div class="mt-4 flex items-center justify-between">
+                        <p class="text-xl text-primary-300">{{ selectedBook.price.toFixed(2) }} zł</p>
+                        <button @click="addToCart"
+                            :class="['px-4 py-2 rounded-md text-text', selectedBook.inventory.quantity < 1 ? 'bg-gray-400 cursor-not-allowed' : 'bg-gradient-to-r from-[#3A7BD5] from-70% to-[#4e88d9] hover:from-[#4e88d9] hover:to-[#3A7BD5]']"
+                            :disabled="selectedBook.inventory.quantity < 1">
+                            Dodaj do koszyka
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Sekcja ze szczegółami -->
+                <div class="p-4 bg-bg-200 rounded-lg shadow w-2/5">
+                    <h2 class="text-xl font-semibold mb-2">Szczegóły</h2>
+                    <ul class="list-none p-0">
+                        <li class="flex mb-2">
+                            <span class="w-32 text-lg inline-block">Tytuł: </span>
+                            <span class="flex-1 ml-4">{{ selectedBook.title }}</span>
+                        </li>
+                        <li class="flex mb-2">
+                            <span class="w-32 text-lg  inline-block">Autor: </span>
+                            <span class="flex-1 ml-4">{{ selectedBook.bookAuthors.map(author => author.name).join(', ')
+                                }}</span>
+                        </li>
+                        <li class="flex mb-2">
+                            <span class="w-32 text-lg  inline-block">Kategoria: </span>
+                            <span class="flex-1 ml-4">{{ selectedBook.category.name }}</span>
+                        </li>
+                        <li class="flex mb-2">
+                            <span class="w-32 text-lg  inline-block">Rok wydania: </span>
+                            <span class="flex-1 ml-4">{{ selectedBook.publicationYear }}</span>
+                        </li>
+                        <li class="flex mb-2">
+                            <span class="w-32 text-lg  inline-block">ISBN: </span>
+                            <span class="flex-1 ml-4">{{ selectedBook.isbn }}</span>
+                        </li>
+                        <li class="flex mb-2">
+                            <span class=" w-32 text-lg  inline-block">Dostępność: </span>
+                            <span class="flex-1 ml-4">{{ selectedBook.inventory.quantity }} sztuk</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <!-- Panel z książkami od tego samego autora -->
+            <div class="mt-4 w-full  ">
+                <h3 class="text-lg font-semibold mb-2">Inne książki autorstwa {{ selectedBook.bookAuthors[0].name }}
+                </h3>
+                <div class="bg-bg-200 rounded-lg p-4 shadow-md overflow-x-auto flex flex-row space-x-4">
+
+                    <div v-for="similarAuthorBook in similarAuthorBooks" :key="similarAuthorBook.id"
+                        class=" flex-none w-36 max-h-96 ">
+                        <RouterLink :to="'/book/' + similarAuthorBook.id" @click="scrollToTop">
+                            <div class="bg-bg rounded-lg overflow-hidden flex flex-col h-full">
+                                <!-- Zdjęcie książki -->
+                                <div>
+                                    <img class="object-cover mx-auto" :src="similarAuthorBook.img"
+                                        :alt="similarAuthorBook.title" />
+                                </div>
+                                <div class="p-2 text-center flex flex-col justify-around">
+                                    <!-- Tytuł książki -->
+                                    <h2 class="text-lg mb-2 line-clamp-2">{{ similarAuthorBook.title }}</h2>
+                                    <!-- Autorzy książki -->
+                                    <p class="text-text-200 line-clamp-2 text-sm mb-2">{{
+                                        similarAuthorBook.bookAuthors.map(author =>
+                                            author.name).join(', ') }}</p>
+                                    <!-- Cena książki -->
+                                    <p class="text-xl mb-2 text-primary-200 font-semibold">{{ similarAuthorBook.price }}
+                                        zł
+                                    </p>
+                                </div>
+                            </div>
+                        </RouterLink>
+                    </div>
+                </div>
+            </div>
+            <!-- Panel z książkami w podobnej kategorii -->
+            <div class="mt-4 w-full ">
+                <h3 class="text-lg font-semibold mb-2">Książki w podobnej kategorii</h3>
+                <div class="bg-bg-200 rounded-lg p-4 shadow-md overflow-x-auto flex flex-row space-x-4">
+                    <div v-for="similarCategoryBook in similarCategoryBooks" :key="similarCategoryBook.id"
+                        class=" flex-none w-36  max-h-96">
+                        <RouterLink :to="'/book/' + similarCategoryBook.id" @click="scrollToTop">
+                            <div class="bg-bg rounded-lg overflow-hidden flex flex-col h-full">
+                                <!-- Zdjęcie książki -->
+                                <div>
+                                    <img class="object-cover mx-auto" :src="similarCategoryBook.img"
+                                        :alt="similarCategoryBook.title" />
+                                </div>
+                                <div class="p-2 text-center flex flex-col justify-around">
+                                    <!-- Tytuł książki -->
+                                    <h2 class="text-lg mb-2 line-clamp-2">{{ similarCategoryBook.title }}</h2>
+                                    <!-- Autorzy książki -->
+                                    <p class="text-text-200 line-clamp-2 text-sm mb-2">{{
+                                        similarCategoryBook.bookAuthors.map(author =>
+                                            author.name).join(', ') }}</p>
+                                    <!-- Cena książki -->
+                                    <p class="text-xl mb-2 text-primary-200 font-semibold">{{ similarCategoryBook.price
+                                        }}
+                                        zł
+                                    </p>
+                                </div>
+                            </div>
+                        </RouterLink>
+                    </div>
+                </div>
+            </div>
+            <!-- Opis ksiązki-->
+            <div id="description" class="mt-4 p-4 w-full bg-bg-200 rounded-lg shadow ">
+                <p class="text-lg font-semibold text-text mb-2">Opis</p>
+                <p class="text-lg text-text-200">{{ selectedBook.description }}</p>
+            </div>
+
+        </div>
+    </div>
+    <!-- Cart Modal -->
+    <div v-if="showConfirmation" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 "
+        @click="closeCartModal">
+        <div class="bg-bg p-2 mx-4 rounded-md shadow-md relative w-1/3 " @click.stop>
+            <div class="m-2 flex flex-row items-center justify-between w-full">
+                <p class="text-xl">Produkt został dodany do koszyka!</p>
+                <!-- Ikona X w prawym górnym rogu -->
+                <button @click="closeCartModal" class="mr-4 bg-accent/10  rounded-full">
+                    <svg class="w-5 h-5 text-accent cursor-pointer m-1" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
+                    </svg>
+                </button>
+            </div>
+            <hr class="border-[#8f001a]">
+            <div class="mt-4 mx-2 flex flex-row items-center ">
+                <!-- Obrazek, tytuł, autorzy i cena -->
+                <div class="flex w-full items-start  ">
+                    <!-- Obrazek książki -->
+                    <img class="w-48  rounded-md mr-6" :src="selectedBook.img" :alt="selectedBook.title" />
+                    <!-- Tytuł, autorzy i cena -->
+                    <div class="flex flex-col justify-between h-72  gap-4">
+                        <div class=" flex flex-col gap-2">
+                            <p class="text-xl">{{ selectedBook.title }}</p>
+                            <p class="text-text-200 text-md">{{ selectedBook.bookAuthors.map(author =>
+                                author.name).join(',') }}</p>
+                            <p class="text-primary-200 font-semibold text-lg">{{ selectedBook.price.toFixed(2) }} zł</p>
+                        </div>
+                        <div class="flex flex-col gap-4 items-center  w-full">
+                            <!-- Przejdź do koszyka -->
+                            <router-link :to="{ name: 'ShoppingCartPage' }"
+                                class="px-4 py-2 bg-gradient-to-r from-[#3A7BD5] from-70% to-[#4e88d9] text-text text-center text-lg w-full rounded-md mb-2 md:mb-0">
+                                Przejdź do koszyka
+                            </router-link>
+
+                            <!-- Kontynuuj zakupy -->
+                            <button @click="closeCartModal"
+                                class="px-4 py-2 border border-[#3f434c] text-text text-lg w-full rounded-md">
+                                Kontynuuj zakupy
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- Przyciski -->
+
+            </div>
+        </div>
+    </div>
 </template>
-  
+
 <script>
 export default {
     watch: {
@@ -182,12 +336,14 @@ export default {
                 }
             },
         },
+
     },
 
     data() {
         return {
             showConfirmation: false,
-            isExpanded: false
+            isExpanded: false,
+            windowWidth: window.innerWidth,
         }
     },
     computed: {
@@ -199,29 +355,48 @@ export default {
         },
         similarAuthorBooks() {
             return this.$store.getters['book/similarAuthorBooks'];
-        }
+        },
+        isOverPhoneWidth() {
+            return this.windowWidth > this.$store.state.phoneWidth;
+        },
     },
     methods: {
         toggleImageExpansion() {
             this.isExpanded = !this.isExpanded;
         },
         async addToCart() {
-            const cartItem ={
+            const cartItem = {
                 bookId: this.selectedBook.id,
                 quantity: 1
             }
-            await this.$store.dispatch('shoppingCart/addCartItem',cartItem);
+            await this.$store.dispatch('shoppingCart/addCartItem', cartItem);
             this.showConfirmation = true;
         },
-        closeCartModal() {        
-                this.showConfirmation = false;   
+        closeCartModal() {
+            this.showConfirmation = false;
         },
         scrollToTop() {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         },
-    }
+        handleResize() {
+            this.windowWidth = window.innerWidth;
+        },
+        scrollToDescription() {
+            const descriptionSection = document.getElementById('description');
+            if (descriptionSection) {
+                descriptionSection.scrollIntoView({ behavior: 'smooth' });
+            }
+        },
+    },
+    mounted() {
+        window.addEventListener('resize', this.handleResize);
+    },
+    beforeUnmount() {
+        // Remove the event listener to prevent memory leaks
+        window.removeEventListener('resize', this.handleResize);
+    },
+
 };
 </script>
-  
+
 <style></style>
-  

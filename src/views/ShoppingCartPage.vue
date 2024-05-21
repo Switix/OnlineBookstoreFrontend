@@ -1,61 +1,66 @@
 <template>
-    <div v-if="cartItems.length != 0" class="flex flex-col justify-center w-full p-4 bg-bg space-y-4">
-        <p class="text-2xl font-bold ">Twój koszyk</p>
-        <div class="space-y-4 bg-bg-200 rounded-lg shadow-md p-6">
-            <!-- cart items-->
-            <div v-for="(cartItem, index) in cartItems" :key="cartItem.id" class="flex ">
+    <div v-if="cartItems.length != 0" class="w-full  bg-bg flex flex-col justify-center items-center ">
+        <div class="w-full p-4 bg-bg space-y-4 max-w-lg ">
+            <p class="text-2xl font-bold ">Twój koszyk</p>
+            <div class="space-y-4 bg-bg-200 rounded-lg shadow-md p-6 ">
+                <!-- cart items-->
+                <div v-for="(cartItem, index) in cartItems" :key="cartItem.id" class="flex ">
 
-                <div :class="{ 'border-b-2 border-bg pb-4 ': index !== cartItems.length - 1 }"
-                    class="flex items-center w-full max-h-36 ">
-                    <div class="mr-4 flex items-center justify-center w-3/12 ">
-                        <router-link :to="{ name: 'BookPage', params: { id: cartItem.book.id } }">
-                            <img :src="cartItem.book.img" alt="Book Cover" class=" max-h-28 w-full max-w-24">
-                        </router-link>
-                    </div>
-                    <div class="flex flex-col justify-between pt-1 h-full w-6/12">
-                        <router-link :to="{ name: 'BookPage', params: { id: cartItem.book.id } }">
-                            <p class="text-lg text-text font-bold line-clamp-2">{{ cartItem.book.title }}</p>
-                        </router-link>
-                        <p class="text-text-200 text-sm line-clamp-2">{{ cartItem.book.bookAuthors.map(author =>
-                            author.name).join(', ') }}</p>
-                        <div class="flex flex-row justify-between items-center">
-                            <p class="text-primary-200 font-bold flex-1">{{ cartItem.book.price.toFixed(2) }} zł <span
-                                    class="text-text font-normal"> / szt.</span> </p>
-
+                    <div :class="{ 'border-b-2 border-bg pb-4 ': index !== cartItems.length - 1 }"
+                        class="flex items-center w-full max-h-36 ">
+                        <div class="mr-4 flex items-center justify-center w-3/12 ">
+                            <router-link :to="{ name: 'BookPage', params: { id: cartItem.book.id } }">
+                                <img :src="cartItem.book.img" alt="Book Cover" class=" max-h-32 w-full max-w-32">
+                            </router-link>
                         </div>
-                    </div>
-                    <div class="flex flex-col justify-between items-center h-full w-3/12">
-                        <button @click="removeCartItem(cartItem.id)" class="bg-accent/10 p-0.5 rounded-full self-end ">
-                            <svg class="w-5 h-5 text-accent cursor-pointer " fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M6 18L18 6M6 6l12 12">
-                                </path>
-                            </svg>
-                        </button>
-                        <!--cart item quantity-->
-                        <div class="flex w-11/12 h-1/4">
-                            <button @click="decreaseQuantity(cartItem)"
-                                class="w-1/4 max-w-5 h-full  bg-primary rounded-l-md">-</button>
-                            <span class=" w-1/2 h-full max-w-10  text-center bg-bg/60 flex items-center justify-center">{{
-                                cartItem.quantity }}</span>
-                            <button @click="increaseQuantity(cartItem)"
-                                class="w-1/4 max-w-5 h-full bg-primary rounded-r-md">+</button>
+                        <div class="flex flex-col justify-between pt-1 h-full w-6/12">
+                            <router-link :to="{ name: 'BookPage', params: { id: cartItem.book.id } }">
+                                <p class="text-lg text-text font-bold line-clamp-2">{{ cartItem.book.title }}</p>
+                            </router-link>
+                            <p class="text-text-200 text-sm line-clamp-2">{{ cartItem.book.bookAuthors.map(author =>
+                                author.name).join(', ') }}</p>
+                            <div class="flex flex-row justify-between items-center">
+                                <p class="text-primary-200 font-bold flex-1">{{ cartItem.book.price.toFixed(2) }} zł
+                                    <span class="text-text font-normal"> / szt.</span>
+                                </p>
+
+                            </div>
+                        </div>
+                        <div class="flex flex-col justify-between items-center h-full w-3/12">
+                            <button @click="removeCartItem(cartItem.id)"
+                                class="bg-accent/10 p-0.5 rounded-full self-end ">
+                                <svg class="w-5 h-5 text-accent cursor-pointer " fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M6 18L18 6M6 6l12 12">
+                                    </path>
+                                </svg>
+                            </button>
+                            <!--cart item quantity-->
+                            <div class="flex w-11/12 h-1/4">
+                                <button @click="decreaseQuantity(cartItem)"
+                                    class="w-1/4 max-w-5 h-full  bg-primary rounded-l-md">-</button>
+                                <span
+                                    class=" w-1/2 h-full max-w-10  text-center bg-bg/60 flex items-center justify-center">{{
+                                        cartItem.quantity }}</span>
+                                <button @click="increaseQuantity(cartItem)"
+                                    class="w-1/4 max-w-5 h-full bg-primary rounded-r-md">+</button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+
+
+            <!--summary-->
+            <ShoppingCartSummary>
+                <router-link :to="{ name: 'OrderCreatePage' }"
+                    class="px-4 py-2  text-center bg-primary text-text rounded-md hover:bg-primary-200">
+                    <span class="text-md">Przejdź do kasy</span>
+                </router-link>
+            </ShoppingCartSummary>
+
         </div>
-
-        <!--summary-->
-        <ShoppingCartSummary >
-            <router-link :to="{ name: 'OrderCreatePage' }"
-                class="px-4 py-2  text-center bg-primary text-text rounded-md hover:bg-primary-200">
-                <span class="text-md">Przejdź do kasy</span>
-            </router-link>
-        </ShoppingCartSummary>
-
-
     </div>
     <!--Empty shoping cart-->
     <div v-else class="flex flex-col justify-center w-full p-4 bg-bg space-y-4">
@@ -79,18 +84,22 @@
             </div>
 
             <p class="text-text text-xl font-semibold">Twój koszyk jest aktualnie pusty</p>
-            <button @click="$router.go(-1)"
-                class="px-4 py-2  text-center bg-primary text-text rounded-md hover:bg-primary-200">
+            <button @click="goBack" class="px-4 py-2  text-center bg-primary text-text rounded-md hover:bg-primary-200">
                 <span class="text-md">Wróć do zakupów</span>
             </button>
         </div>
 
     </div>
 </template>
-  
+
 <script>
 import ShoppingCartSummary from '@/components/ShoppingCartSummary'
 export default {
+    data() {
+        return {
+            fromRoute: null
+        };
+    },
     components: {
         ShoppingCartSummary
     },
@@ -125,9 +134,31 @@ export default {
             await this.$store.dispatch('shoppingCart/updateCartItem', cartItem);
             this.$store.dispatch('shoppingCart/fetchCartItems');
         },
+        goBack() {
+            if (this.fromRoute) {
+                if (this.fromRoute.name == 'ShipmentPage'  ) {
+                    this.$router.push({ name: 'catalogPage' });               
+                } else {
+                    // Default go back
+                    this.$router.go(-1);
+                }
+            } else {
+                // Default go back if fromRoute is not set
+                this.$router.go(-1);
+            }
+        }
+    },
+    beforeRouteEnter(to, from, next) {
+        next(vm => {
+            vm.fromRoute = from;
+        });
+    },
+    beforeRouteUpdate(to, from, next) {
+        this.fromRoute = from;
+        next();
     }
 }
+
 </script>
-  
+
 <style></style>
-  

@@ -65,7 +65,7 @@ export default {
                     await fetchAndSetBookImage(book);
                 }
                 commit('SET_BOOKS', books);
-                commit('SET_CATALOG_TITLE', 'Książki');
+                commit('SET_CATALOG_TITLE', 'Wszystkie książki');
             } catch (error) {
                 console.error('Błąd podczas pobierania danych:', error);
             }

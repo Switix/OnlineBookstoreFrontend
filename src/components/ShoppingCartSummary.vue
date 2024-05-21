@@ -1,5 +1,5 @@
 <template>
-    <div class=" bg-bg-200 w-full rounded-lg shadow-md p-6">
+    <div class=" bg-bg-200 w-full rounded-lg shadow-md p-6 ">
         <div class="flex flex-col space-y-4 border-bg  ">
             <p class="text-xl font-bold">Podsumowanie</p>
             <hr>
