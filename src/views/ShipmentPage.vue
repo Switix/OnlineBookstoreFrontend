@@ -18,7 +18,7 @@
             </div>
 
             <!--summary-->
-            <ShoppingCartSummary>
+            <ShoppingCartSummary :shipmentPrice = this.shipmentMethods[this.selectedShipmentMethodIndex].price >
                 <button @click="goToPayingStage"
                     class="px-4 py-2 text-center bg-primary text-text rounded-md hover:bg-primary-200">
                     <span class="text-md">Zapłać</span>
