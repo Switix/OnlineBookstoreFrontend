@@ -1,5 +1,5 @@
 <template>
-    <div class="flex items-center justify-center mx-4 py-4 bg-bg">
+    <div v-if="user && payMethods && shipmentMethods " class="flex items-center justify-center mx-4 py-4 bg-bg">
         <div class="max-w-md w-full space-y-4  flex flex-col">
             <div class="space-y-4 bg-bg-200 rounded-lg shadow-md p-6  ">
                 <p class="text-2xl font-bold  ">Sposób płatności</p>
@@ -18,7 +18,7 @@
             </div>
 
             <!--summary-->
-            <ShoppingCartSummary :shipmentPrice = this.shipmentMethods[this.selectedShipmentMethodIndex].price >
+            <ShoppingCartSummary :shipmentPrice = "this.shipmentMethods[this.selectedShipmentMethodIndex] ==undefined ? null : this.shipmentMethods[this.selectedShipmentMethodIndex].price" >
                 <button @click="goToPayingStage"
                     class="px-4 py-2 text-center bg-primary text-text rounded-md hover:bg-primary-200">
                     <span class="text-md">Zapłać</span>
@@ -64,7 +64,7 @@ export default {
         this.$store.dispatch('order/fetchShipmentMethods');
     },
     methods: {
-        goToPayingStage() {
+        async goToPayingStage() {
             console.log("Pay simulation")
             const orderData = {
                 billingAddressId: this.user.billingAddress.id,
@@ -72,7 +72,8 @@ export default {
                 payMethodId: this.payMethods[this.selectedPayMethodIndex].id,
                 shipmentMethodId: this.shipmentMethods[this.selectedShipmentMethodIndex].id
             };
-            this.$store.dispatch('order/createOrder', orderData);
+            await this.$store.dispatch('order/createOrder', orderData);
+            this.$router.push({ name: 'ShoppingCartPage' });   
         }
     }
 
