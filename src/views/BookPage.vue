@@ -274,11 +274,11 @@
         </div>
     </div>
     <!-- Cart Modal -->
-    <div v-if="showConfirmation" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 "
+    <div v-if="showConfirmation" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
         @click="closeCartModal">
-        <div class="bg-bg p-2 mx-4 rounded-md shadow-md relative w-1/3 " @click.stop>
+        <div class="bg-bg p-2 mx-4 rounded-md shadow-md relative w-full  max-w-lg " @click.stop>
             <div class="m-2 flex flex-row items-center justify-between w-full">
-                <p class="text-xl">Produkt został dodany do koszyka!</p>
+                <p class="text-md">Produkt został dodany do koszyka!</p>
                 <!-- Ikona X w prawym górnym rogu -->
                 <button @click="closeCartModal" class="mr-4 bg-accent/10  rounded-full">
                     <svg class="w-5 h-5 text-accent cursor-pointer m-1" fill="none" stroke="currentColor"
@@ -289,37 +289,33 @@
                 </button>
             </div>
             <hr class="border-[#8f001a]">
-            <div class="mt-4 mx-2 flex flex-row items-center ">
+            <div class="mt-4 mx-2 flex flex-col items-center md:items-start md:justify-between">
                 <!-- Obrazek, tytuł, autorzy i cena -->
-                <div class="flex w-full items-start  ">
+                <div class="flex w-full items-center ">
                     <!-- Obrazek książki -->
-                    <img class="w-48  rounded-md mr-6" :src="selectedBook.img" :alt="selectedBook.title" />
+                    <img class="w-32  rounded-md mr-6" :src="selectedBook.img" :alt="selectedBook.title" />
                     <!-- Tytuł, autorzy i cena -->
-                    <div class="flex flex-col justify-between h-72  gap-4">
-                        <div class=" flex flex-col gap-2">
-                            <p class="text-xl">{{ selectedBook.title }}</p>
-                            <p class="text-text-200 text-md">{{ selectedBook.bookAuthors.map(author =>
-                                author.name).join(',') }}</p>
-                            <p class="text-primary-200 font-semibold text-lg">{{ selectedBook.price.toFixed(2) }} zł</p>
-                        </div>
-                        <div class="flex flex-col gap-4 items-center  w-full">
-                            <!-- Przejdź do koszyka -->
-                            <router-link :to="{ name: 'ShoppingCartPage' }"
-                                class="px-4 py-2 bg-gradient-to-r from-[#3A7BD5] from-70% to-[#4e88d9] text-text text-center text-lg w-full rounded-md mb-2 md:mb-0">
-                                Przejdź do koszyka
-                            </router-link>
-
-                            <!-- Kontynuuj zakupy -->
-                            <button @click="closeCartModal"
-                                class="px-4 py-2 border border-[#3f434c] text-text text-lg w-full rounded-md">
-                                Kontynuuj zakupy
-                            </button>
-                        </div>
+                    <div>
+                        <p class="text-xl">{{ selectedBook.title }}</p>
+                        <p class="text-text-200 text-md">{{ selectedBook.bookAuthors.map(author =>
+                            author.name).join(', ') }}</p>
+                        <p class="text-primary-200 font-semibold text-lg">{{ selectedBook.price }} zł</p>
                     </div>
-
                 </div>
                 <!-- Przyciski -->
+                <div class="flex flex-col mt-4 items-center space-y-2  w-full">
+                    <!-- Przejdź do koszyka -->
+                    <router-link :to="{ name: 'ShoppingCartPage' }"
+                        class="px-4 py-2 bg-gradient-to-r from-[#3A7BD5] from-70% to-[#4e88d9] text-text text-center text-lg w-full rounded-md ">
+                        Przejdź do koszyka
+                    </router-link>
 
+                    <!-- Kontynuuj zakupy -->
+                    <button @click="closeCartModal"
+                        class="px-4 py-2 border border-[#3f434c] text-text text-lg w-full rounded-md">
+                        Kontynuuj zakupy
+                    </button>
+                </div>
             </div>
         </div>
     </div>
