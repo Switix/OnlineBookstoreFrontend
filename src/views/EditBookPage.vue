@@ -1,5 +1,5 @@
 <template>
-  <div v-if="book" class="container mx-auto p-4">
+  <div v-if="book" class="container mx-auto p-4 max-w-lg">
     <h1 class="text-2xl font-bold mb-4">Edit Book</h1>
 
     <div class="border border-[#8f001a] bg-bg-200 w-full rounded-lg p-2 ">
@@ -126,11 +126,10 @@
       </div>
     </div>
     <button @click="saveBook()"
-      class=" mt-4 w-full rounded-md shadow-sm px-4 py-2 bg-primary text-base font-medium  sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+      class=" mt-4 w-full rounded-md shadow-sm px-4 py-2 bg-primary text-base font-medium  ">
       Zapisz
     </button>
     <p class="text-green-500 text-center">{{ saveStatus }}</p>
-    <button @click="console.log(book)">loguj</button>
   </div>
 
 
