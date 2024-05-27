@@ -2,6 +2,7 @@ import axios from 'axios'
 import { fetchAndSetBookImage } from '@/utils/bookUtils';
 import Category from '@/components/model/Category';
 import Author from '@/components/model/Author';
+import router from '@/router';
 
 
 export default {
@@ -15,6 +16,7 @@ export default {
         authors: [],
         catalogTitle: 'Książki',
         suggestedAuthors: [],
+        suggestedBooks:[],
         suggestedCategories: [],
         showSuggestions: false,
     },
@@ -36,6 +38,9 @@ export default {
         },
         SET_SUGGESTED_AUTHORS(state, authors) {
             state.suggestedAuthors = authors;
+        },
+        SET_SUGGESTED_BOOKS(state, books) {
+            state.suggestedBooks = books;
         },
         SET_SUGGESTED_CATEGORIES(state, categories) {
             state.suggestedCategories = categories;
@@ -126,7 +131,12 @@ export default {
         async suggestionSearch({ commit }, suggestionQuery) {
             try {
                 const response = await axios.get('http://localhost:8080/api/search', { params: { q: suggestionQuery } });
+                
 
+                for (const book of response.data.suggestedBooks) {
+                    await fetchAndSetBookImage(book);
+                }
+                commit('SET_SUGGESTED_BOOKS', response.data.suggestedBooks);
                 commit('SET_SUGGESTED_AUTHORS', response.data.suggestedAuthors.map(authorData => {
                     return new Author(authorData.id, authorData.name);
                 }));
@@ -164,6 +174,9 @@ export default {
             } else if (selected instanceof Category) {
                 commit('SET_CATALOG_TITLE', 'Książki w kategorii ' + selected.name);
                 await fetchData('http://localhost:8080/api/books/categories/');
+            }
+            else{
+                router.push("/book/" + selected.id)
             }
             commit('SET_SHOW_SUGGESTIONS', false);
 

@@ -5,6 +5,15 @@
             class="p-2 border border-[#75aaff] focus:outline-none rounded w-full bg-bg" />
 
         <div v-if="showSuggestions" class="absolute z-10 mt-1 bg-bg-200 border rounded shadow-lg flex flex-col">
+
+            <!-- Nagłówek dla sugestii książek -->
+            <div v-if="suggestedBooks.length > 0" class="font-bold p-2 ">Sugerowane Ksiażki:</div>
+            <!-- Sugestie dla ksiązek -->
+            <ul v-if="suggestedBooks.length > 0">
+                <li v-for="book in suggestedBooks" :key="book.id" @click="selectSuggestion(book)"
+                    class="p-2 cursor-pointer ">{{ book.title }}</li>
+            </ul>
+
             <!-- Nagłówek dla sugestii autorów -->
             <div v-if="suggestedAuthors.length > 0" class="font-bold p-2 ">Sugerowani Autorzy:</div>
             <!-- Sugestie dla autorów -->
@@ -36,6 +45,9 @@ export default {
     computed: {
         suggestedAuthors() {
             return this.$store.state.book.suggestedAuthors;
+        },
+        suggestedBooks() {
+            return this.$store.state.book.suggestedBooks;
         },
         suggestedCategories() {
             return this.$store.state.book.suggestedCategories;
