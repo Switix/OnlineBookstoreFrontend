@@ -36,7 +36,7 @@
                 <ul>
                     <li v-for="author in authors" :key="author.id">
                         <button @click="selectAuthor(author)"
-                            class="w-full text-left text-text-200 focus:outline-none flex justify-between hover:text-primary-200">
+                            class="w-full text-left text-text-200 focus:outline-none flex justify-between hover:text-primary-200 focus:text-primary-200">
                             <span class="truncate">{{ author.name }}</span>
                             <span class="ml-auto">{{ author.count }}</span>
                         </button>
